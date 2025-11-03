@@ -1,0 +1,24 @@
+<header class="app-header">
+  <div class="header-content">
+    <div class="header-left">
+      <h1 class="logo" (click)="navigateHome()">📋 TaskManager</h1>
+    </div>
+    <div class="header-right" *ngIf="user(); else notAuthenticated">
+      <span class="user-name">{{ user()?.name }}</span>
+      <button
+        class="theme-toggle"
+        (click)="toggleTheme()"
+        [title]="isDarkMode() ? 'Switch to Light Mode' : 'Switch to Dark Mode'"
+      >
+        {{ isDarkMode() ? '☀️' : '🌙' }}
+      </button>
+      <button class="btn-logout" (click)="logout()">Logout</button>
+    </div>
+    <ng-template #notAuthenticated>
+      <div class="header-right">
+        <a routerLink="/auth/login" class="btn-link">Login</a>
+      </div>
+    </ng-template>
+  </div>
+</header>
+

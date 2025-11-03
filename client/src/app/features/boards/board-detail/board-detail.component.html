@@ -1,0 +1,152 @@
+<div class="board-detail-container" *ngIf="board(); else loading">
+  <div class="board-header">
+    <div class="board-info">
+      <h1>{{ board()?.name }}</h1>
+      <p *ngIf="board()?.description">{{ board()?.description }}</p>
+    </div>
+    <div class="board-actions">
+      <button class="btn-primary" (click)="openTaskModal()">+ Add Task</button>
+      <a routerLink="/boards" class="btn-secondary">← Back to Boards</a>
+    </div>
+  </div>
+
+  <div class="kanban-board">
+    <div class="kanban-column">
+      <div class="column-header">
+        <h3>📋 TODO</h3>
+        <span class="task-count">{{ todoTasks().length }}</span>
+      </div>
+      <div
+        cdkDropList
+        id="todo-list"
+        [cdkDropListData]="todoTasks()"
+        (cdkDropListDropped)="drop($event)"
+        class="task-list"
+      >
+        <div
+          *ngFor="let task of todoTasks()"
+          cdkDrag
+          class="task-card"
+          [class]="getPriorityClass(task.priority)"
+          (click)="openTaskModal(task)"
+        >
+          <div class="task-header">
+            <h4>{{ task.title }}</h4>
+            <span class="task-priority">{{ task.priority }}</span>
+          </div>
+          <p *ngIf="task.description" class="task-description">{{ task.description }}</p>
+          <div class="task-footer">
+            <div class="task-labels" *ngIf="task.labels && task.labels.length > 0">
+              <span *ngFor="let label of task.labels" class="label">{{ label }}</span>
+            </div>
+            <button
+              class="btn-icon"
+              (click)="deleteTask(task); $event.stopPropagation()"
+              title="Delete"
+            >
+              🗑️
+            </button>
+          </div>
+        </div>
+        <div *ngIf="todoTasks().length === 0" class="empty-column">No tasks yet</div>
+      </div>
+    </div>
+
+    <div class="kanban-column">
+      <div class="column-header">
+        <h3>🚧 IN PROGRESS</h3>
+        <span class="task-count">{{ inProgressTasks().length }}</span>
+      </div>
+      <div
+        cdkDropList
+        id="in-progress-list"
+        [cdkDropListData]="inProgressTasks()"
+        (cdkDropListDropped)="drop($event)"
+        class="task-list"
+      >
+        <div
+          *ngFor="let task of inProgressTasks()"
+          cdkDrag
+          class="task-card"
+          [class]="getPriorityClass(task.priority)"
+          (click)="openTaskModal(task)"
+        >
+          <div class="task-header">
+            <h4>{{ task.title }}</h4>
+            <span class="task-priority">{{ task.priority }}</span>
+          </div>
+          <p *ngIf="task.description" class="task-description">{{ task.description }}</p>
+          <div class="task-footer">
+            <div class="task-labels" *ngIf="task.labels && task.labels.length > 0">
+              <span *ngFor="let label of task.labels" class="label">{{ label }}</span>
+            </div>
+            <button
+              class="btn-icon"
+              (click)="deleteTask(task); $event.stopPropagation()"
+              title="Delete"
+            >
+              🗑️
+            </button>
+          </div>
+        </div>
+        <div *ngIf="inProgressTasks().length === 0" class="empty-column">No tasks yet</div>
+      </div>
+    </div>
+
+    <div class="kanban-column">
+      <div class="column-header">
+        <h3>✅ DONE</h3>
+        <span class="task-count">{{ doneTasks().length }}</span>
+      </div>
+      <div
+        cdkDropList
+        id="done-list"
+        [cdkDropListData]="doneTasks()"
+        (cdkDropListDropped)="drop($event)"
+        class="task-list"
+      >
+        <div
+          *ngFor="let task of doneTasks()"
+          cdkDrag
+          class="task-card"
+          [class]="getPriorityClass(task.priority)"
+          (click)="openTaskModal(task)"
+        >
+          <div class="task-header">
+            <h4>{{ task.title }}</h4>
+            <span class="task-priority">{{ task.priority }}</span>
+          </div>
+          <p *ngIf="task.description" class="task-description">{{ task.description }}</p>
+          <div class="task-footer">
+            <div class="task-labels" *ngIf="task.labels && task.labels.length > 0">
+              <span *ngFor="let label of task.labels" class="label">{{ label }}</span>
+            </div>
+            <button
+              class="btn-icon"
+              (click)="deleteTask(task); $event.stopPropagation()"
+              title="Delete"
+            >
+              🗑️
+            </button>
+          </div>
+        </div>
+        <div *ngIf="doneTasks().length === 0" class="empty-column">No tasks yet</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #loading>
+  <div class="loading-container">
+    <div class="loading">Loading board...</div>
+  </div>
+</ng-template>
+
+<app-task-modal
+  *ngIf="showTaskModal()"
+  [task]="selectedTask()"
+  [boardId]="boardId()"
+  (close)="closeTaskModal()"
+  (saved)="onTaskSaved()"
+></app-task-modal>
+

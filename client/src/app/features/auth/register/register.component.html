@@ -1,0 +1,132 @@
+<div class="auth-container">
+  <div class="auth-card">
+    <h1>Register</h1>
+    <p class="subtitle">Create a new account</p>
+
+    <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" class="auth-form">
+      <div class="form-group">
+        <label for="name">Full Name</label>
+        <input
+          id="name"
+          type="text"
+          formControlName="name"
+          placeholder="Enter your full name"
+          [class.error]="registerForm.get('name')?.invalid && registerForm.get('name')?.touched"
+        />
+        <span
+          class="error-message"
+          *ngIf="
+            registerForm.get('name')?.hasError('required') && registerForm.get('name')?.touched
+          "
+        >
+          Name is required
+        </span>
+        <span
+          class="error-message"
+          *ngIf="
+            registerForm.get('name')?.hasError('minlength') && registerForm.get('name')?.touched
+          "
+        >
+          Name must be at least 2 characters
+        </span>
+      </div>
+
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input
+          id="email"
+          type="email"
+          formControlName="email"
+          placeholder="Enter your email"
+          [class.error]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched"
+        />
+        <span
+          class="error-message"
+          *ngIf="
+            registerForm.get('email')?.hasError('required') && registerForm.get('email')?.touched
+          "
+        >
+          Email is required
+        </span>
+        <span
+          class="error-message"
+          *ngIf="registerForm.get('email')?.hasError('email') && registerForm.get('email')?.touched"
+        >
+          Please enter a valid email
+        </span>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input
+          id="password"
+          type="password"
+          formControlName="password"
+          placeholder="Enter your password"
+          [class.error]="
+            registerForm.get('password')?.invalid && registerForm.get('password')?.touched
+          "
+        />
+        <span
+          class="error-message"
+          *ngIf="
+            registerForm.get('password')?.hasError('required') &&
+            registerForm.get('password')?.touched
+          "
+        >
+          Password is required
+        </span>
+        <span
+          class="error-message"
+          *ngIf="
+            registerForm.get('password')?.hasError('minlength') &&
+            registerForm.get('password')?.touched
+          "
+        >
+          Password must be at least 6 characters
+        </span>
+      </div>
+
+      <div class="form-group">
+        <label for="confirmPassword">Confirm Password</label>
+        <input
+          id="confirmPassword"
+          type="password"
+          formControlName="confirmPassword"
+          placeholder="Confirm your password"
+          [class.error]="
+            registerForm.get('confirmPassword')?.invalid &&
+            registerForm.get('confirmPassword')?.touched
+          "
+        />
+        <span
+          class="error-message"
+          *ngIf="
+            registerForm.get('confirmPassword')?.hasError('required') &&
+            registerForm.get('confirmPassword')?.touched
+          "
+        >
+          Please confirm your password
+        </span>
+        <span
+          class="error-message"
+          *ngIf="
+            registerForm.get('confirmPassword')?.hasError('passwordMismatch') &&
+            registerForm.get('confirmPassword')?.touched
+          "
+        >
+          Passwords do not match
+        </span>
+      </div>
+
+      <div class="error-message" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+      <button type="submit" class="btn-primary" [disabled]="registerForm.invalid || isLoading">
+        {{ isLoading ? 'Registering...' : 'Register' }}
+      </button>
+    </form>
+
+    <p class="auth-link">Already have an account? <a routerLink="/auth/login">Login</a></p>
+  </div>
+</div>
+
