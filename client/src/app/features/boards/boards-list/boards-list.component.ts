@@ -20,6 +20,8 @@ export class BoardsListComponent implements OnInit {
   boards = signal<Board[]>([]);
   isLoading = signal(true);
   searchTerm = signal('');
+  isCreating = signal(false);
+  errorMessage = signal('');
 
   ngOnInit(): void {
     this.loadBoards();
@@ -63,13 +65,24 @@ export class BoardsListComponent implements OnInit {
 
   createBoard(): void {
     const name = prompt('Enter board name:');
-    if (name) {
-      this.boardsService.create({ name }).subscribe({
+    if (name && name.trim()) {
+      this.isCreating.set(true);
+      this.errorMessage.set('');
+
+      this.boardsService.create({ name: name.trim() }).subscribe({
         next: (board) => {
+          this.isCreating.set(false);
+          this.boards.update((boards) => [...boards, board]);
           this.router.navigate(['/boards', board._id]);
+        },
+        error: (err) => {
+          this.isCreating.set(false);
+          console.error('Error creating board:', err);
+          this.errorMessage.set(err.error?.message || 'Failed to create board. Please try again.');
+          // Clear error message after 5 seconds
+          setTimeout(() => this.errorMessage.set(''), 5000);
         },
       });
     }
   }
 }
-

@@ -9,9 +9,16 @@
         (input)="searchTerm.set($any($event.target).value)"
         class="search-input"
       />
-      <button class="btn-primary" (click)="createBoard()">+ New Board</button>
+      <button class="btn-primary" (click)="createBoard()" [disabled]="isCreating()">
+        <span *ngIf="!isCreating()">+ New Board</span>
+        <span *ngIf="isCreating()">Creating...</span>
+      </button>
     </div>
   </header>
+
+  <div *ngIf="errorMessage()" class="error-message">
+    {{ errorMessage() }}
+  </div>
 
   <div class="boards-grid" *ngIf="!isLoading(); else loading">
     <div
@@ -40,4 +47,3 @@
     <div class="loading">Loading boards...</div>
   </ng-template>
 </div>
-

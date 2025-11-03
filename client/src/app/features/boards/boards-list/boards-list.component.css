@@ -61,8 +61,29 @@ h1 {
   transition: background 0.3s;
 }
 
-.btn-primary:hover {
+.btn-primary:hover:not(:disabled) {
   background: #5568d3;
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.error-message {
+  background: #fee;
+  border: 2px solid #fcc;
+  border-radius: 8px;
+  padding: 12px 20px;
+  margin-bottom: 20px;
+  color: #c33;
+  font-size: 14px;
+}
+
+:host-context(.dark-mode) .error-message {
+  background: #3a1a1a;
+  border-color: #c33;
+  color: #ff6b6b;
 }
 
 .boards-grid {
@@ -151,4 +172,3 @@ h1 {
 :host-context(.dark-mode) .loading {
   color: #777;
 }
-

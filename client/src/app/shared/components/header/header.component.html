@@ -1,7 +1,13 @@
 <header class="app-header">
   <div class="header-content">
     <div class="header-left">
-      <h1 class="logo" (click)="navigateHome()">📋 TaskManager</h1>
+      <div class="logo-container" (click)="navigateHome()">
+        <img
+          class="logo-icon"
+          [src]="isDarkMode() ? '/logo-option-5-dark.svg' : '/logo-option-5.svg'"
+          alt="TaskManager Logo"
+        />
+      </div>
     </div>
     <div class="header-right" *ngIf="user(); else notAuthenticated">
       <span class="user-name">{{ user()?.name }}</span>
@@ -21,4 +27,3 @@
     </ng-template>
   </div>
 </header>
-

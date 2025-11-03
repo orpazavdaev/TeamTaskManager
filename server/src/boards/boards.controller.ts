@@ -8,6 +8,8 @@ import {
   Delete,
   UseGuards,
   Request,
+  HttpException,
+  HttpStatus,
 } from "@nestjs/common";
 import { BoardsService } from "./boards.service";
 import { CreateBoardDto } from "./dto/create-board.dto";
@@ -20,8 +22,33 @@ export class BoardsController {
   constructor(private readonly boardsService: BoardsService) {}
 
   @Post()
-  create(@Body() createBoardDto: CreateBoardDto, @Request() req) {
-    return this.boardsService.create(createBoardDto, req.user.userId);
+  async create(@Body() createBoardDto: CreateBoardDto, @Request() req) {
+    try {
+      return await this.boardsService.create(createBoardDto, req.user.userId);
+    } catch (error) {
+      // If it's already an HttpException, re-throw it
+      if (error instanceof HttpException) {
+        throw error;
+      }
+
+      // Handle MongoDB connection errors
+      if (
+        error.name === "MongoServerError" ||
+        error.message?.includes("Mongo")
+      ) {
+        throw new HttpException(
+          "Database connection error. Please check your MongoDB connection.",
+          HttpStatus.SERVICE_UNAVAILABLE
+        );
+      }
+
+      // Generic error
+      console.error("Error creating board:", error);
+      throw new HttpException(
+        error.message || "Failed to create board. Please try again.",
+        HttpStatus.BAD_REQUEST
+      );
+    }
   }
 
   @Get()
@@ -48,4 +75,3 @@ export class BoardsController {
     return this.boardsService.remove(id, req.user.userId);
   }
 }
-

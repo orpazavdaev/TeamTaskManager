@@ -27,17 +27,23 @@
   align-items: center;
 }
 
-.logo {
-  margin: 0;
-  font-size: 24px;
-  font-weight: 600;
-  color: var(--primary-color);
+.logo-container {
+  display: flex;
+  align-items: center;
   cursor: pointer;
   user-select: none;
+  transition: transform 0.2s ease, opacity 0.2s ease;
 }
 
-.logo:hover {
+.logo-container:hover {
   opacity: 0.8;
+  transform: translateY(-1px);
+}
+
+.logo-icon {
+  height: 36px;
+  width: auto;
+  display: block;
 }
 
 .header-right {
@@ -83,4 +89,3 @@
 .btn-link:hover {
   background: var(--primary-hover);
 }
-
