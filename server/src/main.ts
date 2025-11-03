@@ -6,8 +6,13 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   // Enable CORS for Angular frontend
+  const allowedOrigins = [
+    "http://localhost:4200",
+    process.env.FRONTEND_URL,
+  ].filter(Boolean);
+
   app.enableCors({
-    origin: "http://localhost:4200",
+    origin: allowedOrigins.length > 0 ? allowedOrigins : true,
     credentials: true,
   });
 
@@ -26,4 +31,3 @@ async function bootstrap() {
 }
 
 bootstrap();
-

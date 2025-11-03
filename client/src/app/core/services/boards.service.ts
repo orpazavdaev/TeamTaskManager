@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Board, CreateBoardDto } from '../models/board.model';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class BoardsService {
-  private readonly API_URL = 'http://localhost:3000/boards';
+  private readonly API_URL = `${environment.apiUrl}/boards`;
 
   constructor(private http: HttpClient) {}
 
@@ -31,4 +32,3 @@ export class BoardsService {
     return this.http.delete(`${this.API_URL}/${id}`);
   }
 }
-

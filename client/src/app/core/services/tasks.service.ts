@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Task, CreateTaskDto, MoveTaskDto } from '../models/task.model';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TasksService {
-  private readonly API_URL = 'http://localhost:3000/tasks';
+  private readonly API_URL = `${environment.apiUrl}/tasks`;
 
   constructor(private http: HttpClient) {}
 
@@ -36,4 +37,3 @@ export class TasksService {
     return this.http.delete(`${this.API_URL}/${id}`);
   }
 }
-
