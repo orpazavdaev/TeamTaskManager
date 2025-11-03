@@ -53,8 +53,13 @@ npm run start:dev
 ```bash
 cd client
 npm install  # רק בפעם הראשונה
-ng serve
+npm start    # או: npx ng serve
 ```
+
+**⚠️ אם אתה מקבל שגיאה "ng: command not found":**
+
+- השתמש ב-`npm start` במקום `ng serve` - זה עושה את אותו דבר!
+- או השתמש ב-`npx ng serve`
 
 האפליקציה תרוץ על: http://localhost:4200
 
