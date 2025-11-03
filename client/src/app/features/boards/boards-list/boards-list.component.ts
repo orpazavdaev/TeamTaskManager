@@ -4,6 +4,7 @@ import { Router, RouterLink } from '@angular/router';
 import { BoardsService } from '../../../core/services/boards.service';
 import { Board } from '../../../core/models/board.model';
 import { WebSocketService } from '../../../core/services/websocket.service';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-boards-list',
@@ -16,6 +17,7 @@ export class BoardsListComponent implements OnInit {
   private boardsService = inject(BoardsService);
   private router = inject(Router);
   private wsService = inject(WebSocketService);
+  private authService = inject(AuthService);
 
   boards = signal<Board[]>([]);
   isLoading = signal(true);
@@ -24,8 +26,25 @@ export class BoardsListComponent implements OnInit {
   errorMessage = signal('');
 
   ngOnInit(): void {
-    this.loadBoards();
-    this.wsService.connect();
+    // Wait a bit to ensure token is saved after login
+    // Check if token exists, if not wait a bit more
+    const token = this.authService.getToken();
+    if (token) {
+      this.loadBoards();
+      this.wsService.connect();
+    } else {
+      // If no token, wait a bit more (user might be in the process of logging in)
+      setTimeout(() => {
+        const tokenAfterWait = this.authService.getToken();
+        if (tokenAfterWait) {
+          this.loadBoards();
+          this.wsService.connect();
+        } else {
+          // If still no token after wait, try loading anyway (might be a timing issue)
+          this.loadBoards();
+        }
+      }, 300);
+    }
 
     // Listen for board updates
     this.wsService.onBoardUpdate().subscribe((update) => {
@@ -42,14 +61,31 @@ export class BoardsListComponent implements OnInit {
   }
 
   loadBoards(): void {
+    const token = this.authService.getToken();
+    if (!token) {
+      this.errorMessage.set('Authentication required. Please log in again.');
+      this.isLoading.set(false);
+      setTimeout(() => {
+        this.router.navigate(['/auth/login']);
+      }, 1000);
+      return;
+    }
+
     this.isLoading.set(true);
     this.boardsService.getAll().subscribe({
       next: (boards) => {
         this.boards.set(boards);
         this.isLoading.set(false);
+        this.errorMessage.set('');
       },
-      error: () => {
+      error: (err) => {
         this.isLoading.set(false);
+        if (err.status === 401) {
+          this.errorMessage.set('Session expired. Please log in again.');
+          this.authService.logout();
+        } else {
+          this.errorMessage.set(err.error?.message || 'Failed to load boards. Please try again.');
+        }
       },
     });
   }
@@ -77,7 +113,6 @@ export class BoardsListComponent implements OnInit {
         },
         error: (err) => {
           this.isCreating.set(false);
-          console.error('Error creating board:', err);
           this.errorMessage.set(err.error?.message || 'Failed to create board. Please try again.');
           // Clear error message after 5 seconds
           setTimeout(() => this.errorMessage.set(''), 5000);

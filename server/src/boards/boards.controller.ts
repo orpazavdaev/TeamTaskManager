@@ -43,7 +43,6 @@ export class BoardsController {
       }
 
       // Generic error
-      console.error("Error creating board:", error);
       throw new HttpException(
         error.message || "Failed to create board. Please try again.",
         HttpStatus.BAD_REQUEST

@@ -30,28 +30,33 @@ export class LoginComponent {
       this.errorMessage = '';
 
       this.authService.login(this.loginForm.value).subscribe({
-        next: (response) => {
-          console.log('Login successful:', response);
+        next: () => {
           this.isLoading = false;
           this.router.navigate(['/boards']);
         },
         error: (err) => {
-          console.error('Login error:', err);
           this.isLoading = false;
 
           // Better error messages
-          if (err.status === 401 || err.status === 0) {
+          if (err.status === 0) {
+            this.errorMessage =
+              'Cannot connect to server. Please check if the backend is running on http://localhost:3000';
+          } else if (err.status === 401) {
             this.errorMessage =
               err.error?.message || 'Invalid email or password. Please try again.';
           } else if (err.status === 503) {
-            this.errorMessage = 'Database connection error. Please try again later.';
+            this.errorMessage = 'Database connection error. Please check your MongoDB connection.';
           } else if (err.error?.message) {
             this.errorMessage = err.error.message;
           } else {
-            this.errorMessage = 'Login failed. Please check your connection and try again.';
+            this.errorMessage = `Login failed (${
+              err.status || 'unknown error'
+            }). Please check your connection and try again.`;
           }
         },
       });
+    } else {
+      this.errorMessage = 'Please fill in all fields correctly.';
     }
   }
 }

@@ -68,7 +68,6 @@ export class AuthController {
       }
 
       // Generic error
-      console.error("Error during login:", error);
       throw new HttpException(
         error.message ||
           "Login failed. Please check your credentials and try again.",

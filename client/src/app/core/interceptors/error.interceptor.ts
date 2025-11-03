@@ -12,16 +12,15 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
     catchError((error: HttpErrorResponse) => {
       // Handle 401 Unauthorized - token expired or invalid
       if (error.status === 401) {
-        console.warn('Unauthorized access - token expired or invalid');
-        authService.logout();
-        router.navigate(['/auth/login'], {
-          queryParams: { returnUrl: router.url },
-        });
-      }
-
-      // Handle 403 Forbidden - no permission
-      if (error.status === 403) {
-        console.warn('Forbidden - insufficient permissions');
+        const token = authService.getToken();
+        // Only logout if we have a token (meaning it's expired/invalid)
+        // If no token, don't logout as user might be in the process of logging in
+        if (token) {
+          authService.logout();
+          router.navigate(['/auth/login'], {
+            queryParams: { returnUrl: router.url },
+          });
+        }
       }
 
       // Re-throw the error so components can handle it

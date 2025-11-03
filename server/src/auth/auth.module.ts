@@ -2,6 +2,7 @@ import { Module } from "@nestjs/common";
 import { MongooseModule } from "@nestjs/mongoose";
 import { JwtModule } from "@nestjs/jwt";
 import { PassportModule } from "@nestjs/passport";
+import { ConfigModule, ConfigService } from "@nestjs/config";
 import { AuthService } from "./auth.service";
 import { AuthController } from "./auth.controller";
 import { User, UserSchema } from "./schemas/user.schema";
@@ -12,11 +13,16 @@ import { LocalStrategy } from "./strategies/local.strategy";
   imports: [
     MongooseModule.forFeature([{ name: User.name, schema: UserSchema }]),
     PassportModule,
-    JwtModule.register({
-      secret: process.env.JWT_SECRET || "your-secret-key",
-      signOptions: {
-        expiresIn: (process.env.JWT_EXPIRES_IN || "7d") as any,
-      },
+    JwtModule.registerAsync({
+      imports: [ConfigModule],
+      inject: [ConfigService],
+      useFactory: (configService: ConfigService) => ({
+        secret: configService.get<string>("JWT_SECRET") || "your-secret-key",
+        signOptions: {
+          expiresIn: (configService.get<string>("JWT_EXPIRES_IN") ||
+            "7d") as any,
+        },
+      }),
     }),
   ],
   controllers: [AuthController],

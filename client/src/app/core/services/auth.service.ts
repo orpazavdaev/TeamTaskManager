@@ -43,6 +43,10 @@ export class AuthService {
   }
 
   private handleAuthResponse(response: AuthResponse): void {
+    if (!response.access_token) {
+      return;
+    }
+
     localStorage.setItem(this.TOKEN_KEY, response.access_token);
     localStorage.setItem(this.USER_KEY, JSON.stringify(response.user));
     this.currentUser.set(response.user);
@@ -71,4 +75,3 @@ export class AuthService {
     }
   }
 }
-
