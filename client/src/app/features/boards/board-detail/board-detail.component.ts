@@ -94,15 +94,6 @@ export class BoardDetailComponent implements OnInit, OnDestroy {
     this.isLoading.set(true);
     this.tasksService.getByBoard(this.boardId()).subscribe({
       next: (tasks) => {
-        // Debug: Check assignedTo structure
-        tasks.forEach((task) => {
-          if (task.assignedTo && task.assignedTo.length > 0) {
-            console.log('Task:', task.title, 'assignedTo:', task.assignedTo);
-            task.assignedTo.forEach((assignee: any) => {
-              console.log('  Assignee:', assignee, 'Type:', typeof assignee);
-            });
-          }
-        });
         this.tasks.set(tasks);
         this.isLoading.set(false);
       },
@@ -269,25 +260,28 @@ export class BoardDetailComponent implements OnInit, OnDestroy {
     if (typeof assignee === 'string') {
       return '';
     }
+    // Check if it's a populated object with name/email
     if (assignee.name) {
       return assignee.name;
     }
     if (assignee.email) {
       return assignee.email.split('@')[0];
     }
+    // Check if it's an object with _id but no name (not populated)
+    if (assignee._id) {
+      return '';
+    }
     return '';
   }
 
   getAssigneeInitials(assignee: string | any): string {
     if (!assignee) {
-      console.log('getAssigneeInitials: assignee is null/undefined');
       return '?';
     }
     if (typeof assignee === 'string') {
-      console.log('getAssigneeInitials: assignee is string:', assignee);
       return '?';
     }
-    console.log('getAssigneeInitials: assignee object:', assignee);
+    // Check if it's a populated object with name
     if (assignee.name) {
       const name = assignee.name.trim();
       if (name.length === 0) {
@@ -302,10 +296,14 @@ export class BoardDetailComponent implements OnInit, OnDestroy {
       }
       return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
     }
+    // Check if it's a populated object with email but no name
     if (assignee.email) {
       return assignee.email.substring(0, 2).toUpperCase();
     }
-    console.log('getAssigneeInitials: no name or email found');
+    // If it has _id but no name/email, it's not populated - return ?
+    if (assignee._id) {
+      return '?';
+    }
     return '?';
   }
 

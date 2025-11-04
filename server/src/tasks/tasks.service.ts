@@ -36,13 +36,35 @@ export class TasksService {
     const populatedTask = await this.taskModel
       .findById(savedTask._id)
       .populate("createdBy", "name email")
-      .populate("assignedTo", "name email");
+      .populate("assignedTo", "name email")
+      .lean();
+
+    const serializedTask = {
+      ...populatedTask,
+      _id: populatedTask._id.toString(),
+      boardId: populatedTask.boardId.toString(),
+      createdBy: populatedTask.createdBy
+        ? {
+            _id:
+              (populatedTask.createdBy as any)._id?.toString() ||
+              (populatedTask.createdBy as any).id,
+            name: (populatedTask.createdBy as any).name,
+            email: (populatedTask.createdBy as any).email,
+          }
+        : populatedTask.createdBy,
+      assignedTo: (populatedTask.assignedTo || []).map((assignee: any) => ({
+        _id: assignee._id?.toString() || assignee.id,
+        name: assignee.name,
+        email: assignee.email,
+      })),
+    };
+
     this.appGateway.broadcastTaskUpdate(
       createTaskDto.boardId,
-      populatedTask,
+      serializedTask,
       "create"
     );
-    return populatedTask;
+    return serializedTask;
   }
 
   async findAll(boardId: string, userId: string) {
@@ -53,33 +75,64 @@ export class TasksService {
       .find({ boardId })
       .populate("createdBy", "name email")
       .populate("assignedTo", "name email")
-      .sort({ order: 1, createdAt: -1 });
+      .sort({ order: 1, createdAt: -1 })
+      .lean();
 
-    // Debug: Check assignedTo structure
-    tasks.forEach((task) => {
-      if (task.assignedTo && task.assignedTo.length > 0) {
-        console.log(
-          `Task ${task.title} assignedTo:`,
-          JSON.stringify(task.assignedTo, null, 2)
-        );
-      }
-    });
-
-    return tasks;
+    // Convert to plain objects to ensure proper serialization
+    return tasks.map((task) => ({
+      ...task,
+      _id: task._id.toString(),
+      boardId: task.boardId.toString(),
+      createdBy: task.createdBy
+        ? {
+            _id:
+              (task.createdBy as any)._id?.toString() ||
+              (task.createdBy as any).id,
+            name: (task.createdBy as any).name,
+            email: (task.createdBy as any).email,
+          }
+        : task.createdBy,
+      assignedTo: (task.assignedTo || []).map((assignee: any) => ({
+        _id: assignee._id?.toString() || assignee.id,
+        name: assignee.name,
+        email: assignee.email,
+      })),
+    }));
   }
 
   async findOne(id: string, userId: string) {
     const task = await this.taskModel
       .findById(id)
       .populate("createdBy", "name email")
-      .populate("assignedTo", "name email");
+      .populate("assignedTo", "name email")
+      .lean();
     if (!task) {
       throw new NotFoundException("Task not found");
     }
 
     // Verify user has access to board
     await this.boardsService.findOne(task.boardId.toString(), userId);
-    return task;
+
+    // Convert to plain object
+    return {
+      ...task,
+      _id: task._id.toString(),
+      boardId: task.boardId.toString(),
+      createdBy: task.createdBy
+        ? {
+            _id:
+              (task.createdBy as any)._id?.toString() ||
+              (task.createdBy as any).id,
+            name: (task.createdBy as any).name,
+            email: (task.createdBy as any).email,
+          }
+        : task.createdBy,
+      assignedTo: (task.assignedTo || []).map((assignee: any) => ({
+        _id: assignee._id?.toString() || assignee.id,
+        name: assignee.name,
+        email: assignee.email,
+      })),
+    };
   }
 
   async update(id: string, updateTaskDto: UpdateTaskDto, userId: string) {
@@ -96,13 +149,35 @@ export class TasksService {
     const populatedTask = await this.taskModel
       .findById(updatedTask._id)
       .populate("createdBy", "name email")
-      .populate("assignedTo", "name email");
+      .populate("assignedTo", "name email")
+      .lean();
+
+    const serializedTask = {
+      ...populatedTask,
+      _id: populatedTask._id.toString(),
+      boardId: populatedTask.boardId.toString(),
+      createdBy: populatedTask.createdBy
+        ? {
+            _id:
+              (populatedTask.createdBy as any)._id?.toString() ||
+              (populatedTask.createdBy as any).id,
+            name: (populatedTask.createdBy as any).name,
+            email: (populatedTask.createdBy as any).email,
+          }
+        : populatedTask.createdBy,
+      assignedTo: (populatedTask.assignedTo || []).map((assignee: any) => ({
+        _id: assignee._id?.toString() || assignee.id,
+        name: assignee.name,
+        email: assignee.email,
+      })),
+    };
+
     this.appGateway.broadcastTaskUpdate(
       task.boardId.toString(),
-      populatedTask,
+      serializedTask,
       "update"
     );
-    return populatedTask;
+    return serializedTask;
   }
 
   async move(id: string, moveTaskDto: MoveTaskDto, userId: string) {
@@ -120,13 +195,35 @@ export class TasksService {
     const populatedTask = await this.taskModel
       .findById(movedTask._id)
       .populate("createdBy", "name email")
-      .populate("assignedTo", "name email");
+      .populate("assignedTo", "name email")
+      .lean();
+
+    const serializedTask = {
+      ...populatedTask,
+      _id: populatedTask._id.toString(),
+      boardId: populatedTask.boardId.toString(),
+      createdBy: populatedTask.createdBy
+        ? {
+            _id:
+              (populatedTask.createdBy as any)._id?.toString() ||
+              (populatedTask.createdBy as any).id,
+            name: (populatedTask.createdBy as any).name,
+            email: (populatedTask.createdBy as any).email,
+          }
+        : populatedTask.createdBy,
+      assignedTo: (populatedTask.assignedTo || []).map((assignee: any) => ({
+        _id: assignee._id?.toString() || assignee.id,
+        name: assignee.name,
+        email: assignee.email,
+      })),
+    };
+
     this.appGateway.broadcastTaskUpdate(
       task.boardId.toString(),
-      populatedTask,
+      serializedTask,
       "update"
     );
-    return populatedTask;
+    return serializedTask;
   }
 
   async remove(id: string, userId: string) {
