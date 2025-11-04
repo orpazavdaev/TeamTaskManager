@@ -47,3 +47,14 @@
     <div class="loading">Loading boards...</div>
   </ng-template>
 </div>
+
+<app-input-dialog
+  *ngIf="showCreateDialog()"
+  title="Create New Board"
+  label="Board Name"
+  placeholder="Enter board name"
+  confirmText="Create"
+  cancelText="Cancel"
+  (confirm)="confirmCreateBoard($event)"
+  (cancel)="cancelCreateBoard()"
+></app-input-dialog>

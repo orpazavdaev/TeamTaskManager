@@ -67,5 +67,14 @@ export class AuthService {
       },
     };
   }
+
+  async findAllUsers() {
+    const users = await this.userModel.find().select("name email _id").exec();
+    return users.map((user) => ({
+      id: user._id,
+      name: user.name,
+      email: user.email,
+    }));
+  }
 }
 

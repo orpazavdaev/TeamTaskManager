@@ -14,11 +14,19 @@ import { WebSocketService } from '../../../core/services/websocket.service';
 import { Task, TaskStatus } from '../../../core/models/task.model';
 import { Board } from '../../../core/models/board.model';
 import { TaskModalComponent } from '../../tasks/task-modal/task-modal.component';
+import { ConfirmDialogComponent } from '../../../shared/components/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-board-detail',
   standalone: true,
-  imports: [CommonModule, RouterLink, CdkDropList, CdkDrag, TaskModalComponent],
+  imports: [
+    CommonModule,
+    RouterLink,
+    CdkDropList,
+    CdkDrag,
+    TaskModalComponent,
+    ConfirmDialogComponent,
+  ],
   templateUrl: './board-detail.component.html',
   styleUrl: './board-detail.component.css',
 })
@@ -40,6 +48,8 @@ export class BoardDetailComponent implements OnInit, OnDestroy {
   isLoading = signal(true);
   showTaskModal = signal(false);
   selectedTask = signal<Task | null>(null);
+  showDeleteDialog = signal(false);
+  taskToDelete = signal<Task | null>(null);
 
   private wsSubscription: any;
 
@@ -97,6 +107,7 @@ export class BoardDetailComponent implements OnInit, OnDestroy {
     const task = event.item.data as Task;
     const previousStatus = task.status;
 
+    // Determine new status based on container ID
     let newStatus: TaskStatus;
     if (event.container.id === 'todo-list') {
       newStatus = TaskStatus.TODO;
@@ -106,17 +117,51 @@ export class BoardDetailComponent implements OnInit, OnDestroy {
       newStatus = TaskStatus.DONE;
     }
 
+    // Get source and destination arrays
+    const currentTasks = [...this.tasks()];
+    const previousTasks = currentTasks.filter((t) => t.status === previousStatus);
+    const newTasks = currentTasks.filter((t) => t.status === newStatus);
+
     if (previousStatus !== newStatus) {
-      // Update task status
+      // Moving between different columns - use transferArrayItem
+      const sourceArray = [...previousTasks];
+      const destArray = [...newTasks];
+
+      // Find the task in source array
+      const taskIndex = sourceArray.findIndex((t) => t._id === task._id);
+      if (taskIndex === -1) return;
+
+      // Transfer to destination (this modifies both arrays)
+      transferArrayItem(sourceArray, destArray, taskIndex, event.currentIndex);
+
+      // Update the transferred task's status
+      const transferredTask = destArray[event.currentIndex];
+      destArray[event.currentIndex] = { ...transferredTask, status: newStatus };
+
+      // Rebuild all tasks with updated orders
+      const otherTasks = currentTasks.filter(
+        (t) => t.status !== previousStatus && t.status !== newStatus
+      );
+      const updatedTasks = [
+        ...otherTasks,
+        ...sourceArray.map((t, idx) => ({ ...t, order: idx })),
+        ...destArray.map((t, idx) => ({ ...t, order: idx })),
+      ];
+
+      // Optimistic update - update UI immediately
+      this.tasks.set(updatedTasks);
+
+      // Send update to server
       this.tasksService
         .move(task._id, {
           status: newStatus,
           order: event.currentIndex,
         })
         .subscribe({
-          next: (updatedTask) => {
+          next: (serverTask) => {
+            // Update with server response
             this.tasks.update((tasks) =>
-              tasks.map((t) => (t._id === updatedTask._id ? updatedTask : t))
+              tasks.map((t) => (t._id === serverTask._id ? serverTask : t))
             );
           },
           error: () => {
@@ -126,19 +171,37 @@ export class BoardDetailComponent implements OnInit, OnDestroy {
         });
     } else {
       // Same column, just reorder
-      const tasksArray = [...this.tasks()];
-      const filteredTasks = tasksArray.filter((t) => t.status === newStatus);
-      moveItemInArray(filteredTasks, event.previousIndex, event.currentIndex);
+      const reorderedTasks = [...newTasks];
+      moveItemInArray(reorderedTasks, event.previousIndex, event.currentIndex);
 
       // Update orders
-      filteredTasks.forEach((task, index) => {
+      const otherTasks = currentTasks.filter((t) => t.status !== newStatus);
+      const updatedTasks = [
+        ...otherTasks,
+        ...reorderedTasks.map((t, idx) => ({ ...t, order: idx })),
+      ];
+
+      // Optimistic update
+      this.tasks.set(updatedTasks);
+
+      // Update orders on server
+      reorderedTasks.forEach((task, index) => {
         if (task.order !== index) {
           this.tasksService
             .move(task._id, {
               status: task.status,
               order: index,
             })
-            .subscribe();
+            .subscribe({
+              next: (serverTask) => {
+                this.tasks.update((tasks) =>
+                  tasks.map((t) => (t._id === serverTask._id ? serverTask : t))
+                );
+              },
+              error: () => {
+                this.loadTasks();
+              },
+            });
         }
       });
     }
@@ -160,17 +223,74 @@ export class BoardDetailComponent implements OnInit, OnDestroy {
   }
 
   deleteTask(task: Task): void {
-    if (confirm('Are you sure you want to delete this task?')) {
+    this.taskToDelete.set(task);
+    this.showDeleteDialog.set(true);
+  }
+
+  confirmDelete(): void {
+    const task = this.taskToDelete();
+    if (task) {
       this.tasksService.delete(task._id).subscribe({
         next: () => {
           this.tasks.update((tasks) => tasks.filter((t) => t._id !== task._id));
+          this.showDeleteDialog.set(false);
+          this.taskToDelete.set(null);
+        },
+        error: () => {
+          this.showDeleteDialog.set(false);
+          this.taskToDelete.set(null);
         },
       });
     }
   }
 
+  cancelDelete(): void {
+    this.showDeleteDialog.set(false);
+    this.taskToDelete.set(null);
+  }
+
   getPriorityClass(priority: string): string {
     return `priority-${priority.toLowerCase()}`;
   }
-}
 
+  getAssigneeName(assignee: string | any): string {
+    if (typeof assignee === 'string') {
+      return '';
+    }
+    return assignee.name || assignee.email || '';
+  }
+
+  getAssigneeInitials(assignee: string | any): string {
+    if (typeof assignee === 'string') {
+      return '?';
+    }
+    const name = assignee.name || '';
+    return (
+      name
+        .split(' ')
+        .map((n: string) => n[0])
+        .join('')
+        .toUpperCase()
+        .substring(0, 2) || '?'
+    );
+  }
+
+  getAssigneeAvatarColor(assignee: string | any): string {
+    if (typeof assignee === 'string') {
+      return '#64748b';
+    }
+    const name = assignee.name || '';
+    const colors = [
+      '#0052cc',
+      '#ffab00',
+      '#36b37e',
+      '#6554c0',
+      '#ff5630',
+      '#00b8d9',
+      '#ff7452',
+      '#00c7e6',
+    ];
+    const index = name.charCodeAt(0) % colors.length;
+    return colors[index];
+  }
+}

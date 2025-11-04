@@ -5,11 +5,12 @@ import { BoardsService } from '../../../core/services/boards.service';
 import { Board } from '../../../core/models/board.model';
 import { WebSocketService } from '../../../core/services/websocket.service';
 import { AuthService } from '../../../core/services/auth.service';
+import { InputDialogComponent } from '../../../shared/components/input-dialog/input-dialog.component';
 
 @Component({
   selector: 'app-boards-list',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, InputDialogComponent],
   templateUrl: './boards-list.component.html',
   styleUrl: './boards-list.component.css',
 })
@@ -24,6 +25,7 @@ export class BoardsListComponent implements OnInit {
   searchTerm = signal('');
   isCreating = signal(false);
   errorMessage = signal('');
+  showCreateDialog = signal(false);
 
   ngOnInit(): void {
     // Wait a bit to ensure token is saved after login
@@ -100,10 +102,14 @@ export class BoardsListComponent implements OnInit {
   }
 
   createBoard(): void {
-    const name = prompt('Enter board name:');
+    this.showCreateDialog.set(true);
+  }
+
+  confirmCreateBoard(name: string): void {
     if (name && name.trim()) {
       this.isCreating.set(true);
       this.errorMessage.set('');
+      this.showCreateDialog.set(false);
 
       this.boardsService.create({ name: name.trim() }).subscribe({
         next: (board) => {
@@ -119,5 +125,9 @@ export class BoardsListComponent implements OnInit {
         },
       });
     }
+  }
+
+  cancelCreateBoard(): void {
+    this.showCreateDialog.set(false);
   }
 }

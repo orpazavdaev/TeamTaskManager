@@ -4,16 +4,16 @@
   align-items: center;
   min-height: 100vh;
   padding: 20px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--bg-color);
 }
 
 .auth-card {
-  background: white;
-  border-radius: 12px;
-  padding: 40px;
+  background: var(--card-bg);
+  border-radius: 3px;
+  padding: 32px;
   width: 100%;
   max-width: 400px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-md);
 }
 
 :host-context(.dark-mode) .auth-card {
@@ -88,19 +88,24 @@ input.error {
 }
 
 .btn-primary {
-  padding: 12px;
-  background: #667eea;
+  padding: 8px 16px;
+  background: var(--primary-color);
   color: white;
   border: none;
-  border-radius: 8px;
-  font-size: 16px;
+  border-radius: 3px;
+  font-size: 14px;
   font-weight: 500;
   cursor: pointer;
-  transition: background 0.3s;
+  transition: background 0.2s ease;
+  width: 100%;
 }
 
 .btn-primary:hover:not(:disabled) {
-  background: #5568d3;
+  background: var(--primary-hover);
+}
+
+.btn-primary:active {
+  background: #0047b3;
 }
 
 .btn-primary:disabled {
@@ -128,4 +133,3 @@ input.error {
 .auth-link a:hover {
   text-decoration: underline;
 }
-

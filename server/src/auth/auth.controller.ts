@@ -81,4 +81,10 @@ export class AuthController {
   getProfile(@Request() req) {
     return req.user;
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Get("users")
+  async getUsers() {
+    return this.authService.findAllUsers();
+  }
 }

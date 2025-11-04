@@ -2,6 +2,7 @@ import { Component, Input, Output, EventEmitter, OnInit, inject, signal } from '
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TasksService } from '../../../core/services/tasks.service';
+import { UsersService, User } from '../../../core/services/users.service';
 import { Task, TaskStatus, TaskPriority, CreateTaskDto } from '../../../core/models/task.model';
 
 @Component({
@@ -18,12 +19,15 @@ export class TaskModalComponent implements OnInit {
   @Output() saved = new EventEmitter<void>();
 
   private tasksService = inject(TasksService);
+  private usersService = inject(UsersService);
   private fb = inject(FormBuilder);
 
   taskForm: FormGroup;
   TaskStatus = TaskStatus;
   TaskPriority = TaskPriority;
   availableLabels = signal<string[]>(['Bug', 'Feature', 'Enhancement', 'Documentation', 'Urgent']);
+  availableUsers = signal<User[]>([]);
+  selectedUsers = signal<User[]>([]);
 
   constructor() {
     this.taskForm = this.fb.group({
@@ -37,6 +41,29 @@ export class TaskModalComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    // Load available users
+    this.usersService.getAll().subscribe({
+      next: (users) => {
+        this.availableUsers.set(users);
+        // Set selected users if editing task
+        if (this.task && this.task.assignedTo) {
+          const selectedUserIds = this.task.assignedTo
+            .map((u) => {
+              if (typeof u === 'string') {
+                return u;
+              }
+              return (u as any)._id || (u as any).id || '';
+            })
+            .filter((id) => id !== '');
+          const selectedUsers = users.filter((u) => selectedUserIds.includes(u.id));
+          this.selectedUsers.set(selectedUsers);
+        }
+      },
+      error: (err) => {
+        console.error('Error loading users:', err);
+      },
+    });
+
     if (this.task) {
       this.taskForm.patchValue({
         title: this.task.title,
@@ -65,6 +92,7 @@ export class TaskModalComponent implements OnInit {
       const taskData: CreateTaskDto = {
         ...formValue,
         boardId: this.boardId,
+        assignedTo: this.selectedUsers().map((u) => u.id),
       };
 
       if (this.task) {
@@ -107,6 +135,46 @@ export class TaskModalComponent implements OnInit {
   isLabelSelected(label: string): boolean {
     const labels = this.taskForm.get('labels')?.value || [];
     return labels.includes(label);
+  }
+
+  toggleUser(user: User): void {
+    const selected = this.selectedUsers();
+    const index = selected.findIndex((u) => u.id === user.id);
+    if (index > -1) {
+      selected.splice(index, 1);
+    } else {
+      selected.push(user);
+    }
+    this.selectedUsers.set([...selected]);
+  }
+
+  isUserSelected(user: User): boolean {
+    return this.selectedUsers().some((u) => u.id === user.id);
+  }
+
+  getUserInitials(user: User): string {
+    return user.name
+      .split(' ')
+      .map((n) => n[0])
+      .join('')
+      .toUpperCase()
+      .substring(0, 2);
+  }
+
+  getUserAvatarColor(user: User): string {
+    // Generate a consistent color based on user name
+    const colors = [
+      '#0052cc',
+      '#ffab00',
+      '#36b37e',
+      '#6554c0',
+      '#ff5630',
+      '#00b8d9',
+      '#ff7452',
+      '#00c7e6',
+    ];
+    const index = user.name.charCodeAt(0) % colors.length;
+    return colors[index];
   }
 
   closeModal(): void {

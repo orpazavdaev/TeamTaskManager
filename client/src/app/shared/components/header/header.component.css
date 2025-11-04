@@ -1,11 +1,11 @@
 .app-header {
-  background: white;
   border-bottom: 1px solid var(--border-color);
   padding: 0;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+  box-shadow: none;
   position: sticky;
   top: 0;
   z-index: 100;
+  background: var(--card-bg);
 }
 
 :host-context(.dark-mode) .app-header {
@@ -73,19 +73,24 @@
 
 .btn-logout,
 .btn-link {
-  padding: 8px 16px;
+  padding: 6px 12px;
   background: var(--primary-color);
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: 3px;
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
   text-decoration: none;
-  transition: background 0.2s;
+  transition: background 0.2s ease;
 }
 
 .btn-logout:hover,
 .btn-link:hover {
   background: var(--primary-hover);
+}
+
+.btn-logout:active,
+.btn-link:active {
+  background: #0047b3;
 }

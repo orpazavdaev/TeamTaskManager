@@ -1,0 +1,36 @@
+<div class="dialog-overlay" (click)="onCancel()">
+  <div class="dialog-content" (click)="$event.stopPropagation()">
+    <div class="dialog-header">
+      <h3>{{ title }}</h3>
+    </div>
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="dialog-form">
+      <div class="dialog-body">
+        <div class="form-group">
+          <label>{{ label }}</label>
+          <input
+            type="text"
+            formControlName="value"
+            [placeholder]="placeholder"
+            [class.error]="form.get('value')?.invalid && form.get('value')?.touched"
+            autofocus
+          />
+          <span
+            class="error-message"
+            *ngIf="form.get('value')?.hasError('required') && form.get('value')?.touched"
+          >
+            {{ label }} is required
+          </span>
+        </div>
+      </div>
+      <div class="dialog-actions">
+        <button type="button" class="btn-cancel" (click)="onCancel()">
+          {{ cancelText }}
+        </button>
+        <button type="submit" class="btn-confirm" [disabled]="form.invalid">
+          {{ confirmText }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
