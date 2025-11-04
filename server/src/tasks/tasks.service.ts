@@ -33,23 +33,39 @@ export class TasksService {
       status: createTaskDto.status || TaskStatus.TODO,
     });
     const savedTask = await task.save();
+    const populatedTask = await this.taskModel
+      .findById(savedTask._id)
+      .populate("createdBy", "name email")
+      .populate("assignedTo", "name email");
     this.appGateway.broadcastTaskUpdate(
       createTaskDto.boardId,
-      savedTask,
+      populatedTask,
       "create"
     );
-    return savedTask;
+    return populatedTask;
   }
 
   async findAll(boardId: string, userId: string) {
     // Verify user has access to board
     await this.boardsService.findOne(boardId, userId);
 
-    return this.taskModel
+    const tasks = await this.taskModel
       .find({ boardId })
       .populate("createdBy", "name email")
       .populate("assignedTo", "name email")
       .sort({ order: 1, createdAt: -1 });
+
+    // Debug: Check assignedTo structure
+    tasks.forEach((task) => {
+      if (task.assignedTo && task.assignedTo.length > 0) {
+        console.log(
+          `Task ${task.title} assignedTo:`,
+          JSON.stringify(task.assignedTo, null, 2)
+        );
+      }
+    });
+
+    return tasks;
   }
 
   async findOne(id: string, userId: string) {
@@ -77,12 +93,16 @@ export class TasksService {
 
     Object.assign(task, updateTaskDto);
     const updatedTask = await task.save();
+    const populatedTask = await this.taskModel
+      .findById(updatedTask._id)
+      .populate("createdBy", "name email")
+      .populate("assignedTo", "name email");
     this.appGateway.broadcastTaskUpdate(
       task.boardId.toString(),
-      updatedTask,
+      populatedTask,
       "update"
     );
-    return updatedTask;
+    return populatedTask;
   }
 
   async move(id: string, moveTaskDto: MoveTaskDto, userId: string) {
@@ -97,12 +117,16 @@ export class TasksService {
     task.status = moveTaskDto.status;
     task.order = moveTaskDto.order;
     const movedTask = await task.save();
+    const populatedTask = await this.taskModel
+      .findById(movedTask._id)
+      .populate("createdBy", "name email")
+      .populate("assignedTo", "name email");
     this.appGateway.broadcastTaskUpdate(
       task.boardId.toString(),
-      movedTask,
+      populatedTask,
       "update"
     );
-    return movedTask;
+    return populatedTask;
   }
 
   async remove(id: string, userId: string) {

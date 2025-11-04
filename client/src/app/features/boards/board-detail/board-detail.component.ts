@@ -94,6 +94,15 @@ export class BoardDetailComponent implements OnInit, OnDestroy {
     this.isLoading.set(true);
     this.tasksService.getByBoard(this.boardId()).subscribe({
       next: (tasks) => {
+        // Debug: Check assignedTo structure
+        tasks.forEach((task) => {
+          if (task.assignedTo && task.assignedTo.length > 0) {
+            console.log('Task:', task.title, 'assignedTo:', task.assignedTo);
+            task.assignedTo.forEach((assignee: any) => {
+              console.log('  Assignee:', assignee, 'Type:', typeof assignee);
+            });
+          }
+        });
         this.tasks.set(tasks);
         this.isLoading.set(false);
       },
@@ -254,32 +263,63 @@ export class BoardDetailComponent implements OnInit, OnDestroy {
   }
 
   getAssigneeName(assignee: string | any): string {
+    if (!assignee) {
+      return '';
+    }
     if (typeof assignee === 'string') {
       return '';
     }
-    return assignee.name || assignee.email || '';
+    if (assignee.name) {
+      return assignee.name;
+    }
+    if (assignee.email) {
+      return assignee.email.split('@')[0];
+    }
+    return '';
   }
 
   getAssigneeInitials(assignee: string | any): string {
-    if (typeof assignee === 'string') {
+    if (!assignee) {
+      console.log('getAssigneeInitials: assignee is null/undefined');
       return '?';
     }
-    const name = assignee.name || '';
-    return (
-      name
-        .split(' ')
-        .map((n: string) => n[0])
-        .join('')
-        .toUpperCase()
-        .substring(0, 2) || '?'
-    );
+    if (typeof assignee === 'string') {
+      console.log('getAssigneeInitials: assignee is string:', assignee);
+      return '?';
+    }
+    console.log('getAssigneeInitials: assignee object:', assignee);
+    if (assignee.name) {
+      const name = assignee.name.trim();
+      if (name.length === 0) {
+        return '?';
+      }
+      const parts = name.split(' ').filter((n: string) => n.length > 0);
+      if (parts.length === 0) {
+        return '?';
+      }
+      if (parts.length === 1) {
+        return parts[0].substring(0, 2).toUpperCase();
+      }
+      return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    }
+    if (assignee.email) {
+      return assignee.email.substring(0, 2).toUpperCase();
+    }
+    console.log('getAssigneeInitials: no name or email found');
+    return '?';
   }
 
   getAssigneeAvatarColor(assignee: string | any): string {
+    if (!assignee) {
+      return '#64748b';
+    }
     if (typeof assignee === 'string') {
       return '#64748b';
     }
-    const name = assignee.name || '';
+    const name = assignee.name || assignee.email || '';
+    if (name.length === 0) {
+      return '#64748b';
+    }
     const colors = [
       '#0052cc',
       '#ffab00',
