@@ -1,35 +1,39 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 :root {
-  --primary-color: #0052cc;
-  --primary-hover: #0065ff;
-  --primary-light: #deebff;
-  --bg-color: #f4f5f7;
+  /* Pastel Color Palette - No Green! */
+  --primary-color: #d782ba; /* Sky magenta */
+  --primary-hover: #e18ad4; /* Violet */
+  --primary-light: #eeb1d5; /* Lavender pink */
+  --primary-lighter: #efc7e5; /* Thistle */
+
+  --bg-color: #fef7ff; /* Very light pink/white background */
   --card-bg: #ffffff;
-  --text-color: #172b4d;
-  --text-secondary: #5e6c84;
-  --border-color: #dfe1e6;
-  --shadow-sm: 0 1px 1px rgba(9, 30, 66, 0.13);
-  --shadow-md: 0 1px 1px rgba(9, 30, 66, 0.13), 0 0 1px rgba(9, 30, 66, 0.13);
-  --shadow-lg: 0 4px 8px -2px rgba(9, 30, 66, 0.13), 0 0 1px rgba(9, 30, 66, 0.13);
-  --shadow-xl: 0 8px 16px -4px rgba(9, 30, 66, 0.13), 0 0 1px rgba(9, 30, 66, 0.13);
-  --todo-color: #0052cc;
-  --in-progress-color: #ffab00;
-  --done-color: #36b37e;
-  --hover-bg: #f4f5f7;
+  --text-color: #2d3748;
+  --text-secondary: #718096;
+  --border-color: #eeb1d5; /* Lavender pink border */
+  --shadow-sm: 0 1px 3px rgba(215, 130, 186, 0.12);
+  --shadow-md: 0 4px 6px rgba(215, 130, 186, 0.15);
+  --shadow-lg: 0 10px 15px rgba(215, 130, 186, 0.2);
+  --shadow-xl: 0 20px 25px rgba(215, 130, 186, 0.25);
+  --todo-color: #d782ba; /* Sky magenta */
+  --in-progress-color: #e18ad4; /* Violet */
+  --done-color: #eeb1d5; /* Lavender pink */
+  --hover-bg: #efc7e5; /* Thistle */
 }
 
 .dark-mode {
-  --bg-color: #1d2125;
-  --card-bg: #22272b;
-  --text-color: #b3bac5;
-  --text-secondary: #8c9cb8;
-  --border-color: #38414a;
-  --shadow-sm: 0 1px 1px rgba(0, 0, 0, 0.2);
-  --shadow-md: 0 1px 1px rgba(0, 0, 0, 0.2), 0 0 1px rgba(0, 0, 0, 0.2);
-  --shadow-lg: 0 4px 8px -2px rgba(0, 0, 0, 0.3), 0 0 1px rgba(0, 0, 0, 0.3);
-  --shadow-xl: 0 8px 16px -4px rgba(0, 0, 0, 0.4), 0 0 1px rgba(0, 0, 0, 0.4);
-  --hover-bg: #2c333a;
+  /* Dark mode with pastel accents */
+  --bg-color: #1a1f2e;
+  --card-bg: #252a3a;
+  --text-color: #eeb1d5; /* Lavender pink text */
+  --text-secondary: #efc7e5; /* Thistle secondary */
+  --border-color: #d782ba; /* Sky magenta border */
+  --shadow-sm: 0 1px 3px rgba(215, 130, 186, 0.3);
+  --shadow-md: 0 4px 6px rgba(215, 130, 186, 0.4);
+  --shadow-lg: 0 10px 15px rgba(215, 130, 186, 0.5);
+  --shadow-xl: 0 20px 25px rgba(215, 130, 186, 0.6);
+  --hover-bg: #2d3444;
 }
 
 * {
@@ -43,6 +47,26 @@ body {
   background-color: var(--bg-color);
   color: var(--text-color);
   transition: background-color 0.3s, color 0.3s;
+  overflow-x: hidden;
+}
+
+/* Responsive Typography */
+@media (max-width: 768px) {
+  body {
+    font-size: 14px;
+  }
+
+  h1 {
+    font-size: 24px !important;
+  }
+
+  h2 {
+    font-size: 20px !important;
+  }
+
+  h3 {
+    font-size: 18px !important;
+  }
 }
 
 h1,

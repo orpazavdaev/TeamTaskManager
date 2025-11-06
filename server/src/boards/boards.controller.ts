@@ -73,4 +73,11 @@ export class BoardsController {
   remove(@Param("id") id: string, @Request() req) {
     return this.boardsService.remove(id, req.user.userId);
   }
+
+  @Post("update-colors")
+  @UseGuards(JwtAuthGuard)
+  updateAllColors(@Request() req) {
+    // Only allow admins or for now, anyone authenticated (can be restricted later)
+    return this.boardsService.updateAllBoardColors();
+  }
 }

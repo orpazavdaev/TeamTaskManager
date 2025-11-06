@@ -25,16 +25,14 @@
       *ngFor="let board of filteredBoards()"
       class="board-card"
       [routerLink]="['/boards', board._id]"
-      [style.border-color]="board.color"
+      [style.border-color]="board.color || '#d782ba'"
     >
-      <div class="board-header" [style.background-color]="board.color + '20'">
+      <div class="board-header" [style.background-color]="(board.color || '#d782ba') + '15'">
         <h3>{{ board.name }}</h3>
       </div>
       <div class="board-content">
         <p *ngIf="board.description">{{ board.description }}</p>
-        <p class="board-meta" *ngIf="!board.description">
-          Created {{ board.createdAt | date : 'short' }}
-        </p>
+        <p class="board-meta">Created {{ board.createdAt | date : 'short' }}</p>
       </div>
     </div>
 

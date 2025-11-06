@@ -17,9 +17,8 @@ export class Board {
   @Prop({ type: [MongooseSchema.Types.ObjectId], default: [] })
   members: MongooseSchema.Types.ObjectId[];
 
-  @Prop({ default: "#4285F4" })
+  @Prop({ default: "#d782ba" })
   color: string;
 }
 
 export const BoardSchema = SchemaFactory.createForClass(Board);
-

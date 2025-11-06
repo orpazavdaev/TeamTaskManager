@@ -31,4 +31,8 @@ export class BoardsService {
   delete(id: string): Observable<any> {
     return this.http.delete(`${this.API_URL}/${id}`);
   }
+
+  updateAllColors(): Observable<any> {
+    return this.http.post(`${this.API_URL}/update-colors`, {});
+  }
 }

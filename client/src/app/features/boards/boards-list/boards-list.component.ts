@@ -34,6 +34,8 @@ export class BoardsListComponent implements OnInit {
     if (token) {
       this.loadBoards();
       this.wsService.connect();
+      // Update all board colors to new pastel palette
+      this.updateAllBoardColors();
     } else {
       // If no token, wait a bit more (user might be in the process of logging in)
       setTimeout(() => {
@@ -41,6 +43,8 @@ export class BoardsListComponent implements OnInit {
         if (tokenAfterWait) {
           this.loadBoards();
           this.wsService.connect();
+          // Update all board colors to new pastel palette
+          this.updateAllBoardColors();
         } else {
           // If still no token after wait, try loading anyway (might be a timing issue)
           this.loadBoards();
@@ -59,6 +63,21 @@ export class BoardsListComponent implements OnInit {
           boards.map((b) => (b._id === update.board._id ? update.board : b))
         );
       }
+    });
+  }
+
+  updateAllBoardColors(): void {
+    // Update all existing boards with old blue colors to new pastel color
+    this.boardsService.updateAllColors().subscribe({
+      next: (result) => {
+        if (result.modifiedCount > 0) {
+          // Reload boards to get updated colors
+          this.loadBoards();
+        }
+      },
+      error: () => {
+        // Silently fail - not critical
+      },
     });
   }
 

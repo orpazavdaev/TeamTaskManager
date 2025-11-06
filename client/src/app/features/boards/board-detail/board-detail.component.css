@@ -50,7 +50,7 @@
 }
 
 .btn-primary:active {
-  background: #0047b3;
+  background: #d782ba; /* Sky magenta */
 }
 
 .btn-secondary {
@@ -76,6 +76,129 @@
   gap: 24px;
   min-height: 600px;
   padding: 8px 0;
+}
+
+/* Mobile Responsive */
+@media (max-width: 1024px) {
+  .board-detail-container {
+    padding: 20px 16px;
+  }
+
+  .board-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .board-info h1 {
+    font-size: 24px;
+  }
+
+  .board-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .btn-primary,
+  .btn-secondary {
+    width: 100%;
+    text-align: center;
+  }
+
+  .kanban-board {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    min-height: auto;
+  }
+
+  .kanban-column {
+    padding: 12px;
+  }
+
+  .task-list {
+    min-height: 200px;
+  }
+}
+
+@media (max-width: 768px) {
+  .board-detail-container {
+    padding: 16px 12px;
+  }
+
+  .board-header {
+    margin-bottom: 20px;
+  }
+
+  .board-info h1 {
+    font-size: 20px;
+  }
+
+  .kanban-board {
+    gap: 12px;
+  }
+
+  .kanban-column {
+    padding: 10px;
+  }
+
+  .column-header h3 {
+    font-size: 11px;
+  }
+
+  .task-count {
+    font-size: 10px;
+    padding: 2px 4px;
+  }
+
+  .task-card {
+    padding: 10px;
+  }
+
+  .task-header h4 {
+    font-size: 14px;
+  }
+
+  .task-description {
+    font-size: 12px;
+  }
+
+  .task-assignees {
+    gap: 4px;
+  }
+
+  .assignee-avatar {
+    width: 24px;
+    height: 24px;
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .board-detail-container {
+    padding: 12px 8px;
+  }
+
+  .board-info h1 {
+    font-size: 18px;
+  }
+
+  .kanban-column {
+    padding: 8px;
+  }
+
+  .task-card {
+    padding: 8px;
+  }
+
+  .task-header h4 {
+    font-size: 13px;
+  }
+
+  .task-priority {
+    font-size: 10px;
+    padding: 2px 6px;
+  }
 }
 
 .kanban-column {
@@ -192,15 +315,15 @@
 }
 
 .priority-high {
-  border-left-color: #de350b;
+  border-left-color: #d782ba; /* Sky magenta */
 }
 
 .priority-medium {
-  border-left-color: #ffab00;
+  border-left-color: #e18ad4; /* Violet */
 }
 
 .priority-low {
-  border-left-color: #36b37e;
+  border-left-color: #efc7e5; /* Thistle */
 }
 
 .task-header {

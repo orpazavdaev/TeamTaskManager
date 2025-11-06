@@ -92,4 +92,16 @@ export class BoardsService {
     this.appGateway.broadcastBoardUpdate(board, "delete");
     return { message: "Board deleted successfully" };
   }
+
+  async updateAllBoardColors() {
+    // Update all boards with old blue color to new pastel color
+    const result = await this.boardModel.updateMany(
+      { color: { $in: ["#4285F4", "#0052cc", "#0065ff", "#667eea"] } },
+      { $set: { color: "#d782ba" } }
+    );
+    return {
+      message: `Updated ${result.modifiedCount} boards to new color scheme`,
+      modifiedCount: result.modifiedCount,
+    };
+  }
 }

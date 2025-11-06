@@ -29,10 +29,10 @@ export class Task {
   @Prop({ required: true })
   boardId: MongooseSchema.Types.ObjectId;
 
-  @Prop({ required: true })
+  @Prop({ required: true, ref: "User" })
   createdBy: MongooseSchema.Types.ObjectId;
 
-  @Prop({ type: [MongooseSchema.Types.ObjectId], default: [] })
+  @Prop({ type: [MongooseSchema.Types.ObjectId], ref: "User", default: [] })
   assignedTo: MongooseSchema.Types.ObjectId[];
 
   @Prop({ type: [String], default: [] })
@@ -46,4 +46,3 @@ export class Task {
 }
 
 export const TaskSchema = SchemaFactory.createForClass(Task);
-

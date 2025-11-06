@@ -120,3 +120,73 @@
   background: #ff991f;
 }
 
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .dialog-overlay {
+    padding: 16px;
+    align-items: flex-end;
+  }
+
+  .dialog-content {
+    max-width: 100%;
+    border-radius: 12px 12px 0 0;
+    animation: slideUp 0.3s ease;
+  }
+
+  .dialog-header {
+    padding: 16px 20px;
+  }
+
+  .dialog-header h3 {
+    font-size: 18px;
+  }
+
+  .dialog-body {
+    padding: 20px;
+  }
+
+  .dialog-body p {
+    font-size: 14px;
+  }
+
+  .dialog-actions {
+    padding: 16px 20px;
+    flex-direction: column-reverse;
+    gap: 10px;
+  }
+
+  .btn-cancel,
+  .btn-confirm {
+    width: 100%;
+    padding: 12px;
+    font-size: 15px;
+  }
+}
+
+@media (max-width: 480px) {
+  .dialog-overlay {
+    padding: 0;
+    align-items: flex-end;
+  }
+
+  .dialog-content {
+    border-radius: 12px 12px 0 0;
+    max-width: 100%;
+  }
+
+  .dialog-header {
+    padding: 14px 16px;
+  }
+
+  .dialog-header h3 {
+    font-size: 16px;
+  }
+
+  .dialog-body {
+    padding: 16px;
+  }
+
+  .dialog-actions {
+    padding: 14px 16px;
+  }
+}

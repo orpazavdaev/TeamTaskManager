@@ -92,11 +92,13 @@ export class TasksService {
             email: (task.createdBy as any).email,
           }
         : task.createdBy,
-      assignedTo: (task.assignedTo || []).map((assignee: any) => ({
-        _id: assignee._id?.toString() || assignee.id,
-        name: assignee.name,
-        email: assignee.email,
-      })),
+      assignedTo: (task.assignedTo || [])
+        .filter((assignee: any) => assignee && typeof assignee === "object")
+        .map((assignee: any) => ({
+          _id: assignee._id?.toString() || assignee.id,
+          name: assignee.name || "",
+          email: assignee.email || "",
+        })),
     }));
   }
 
@@ -127,11 +129,13 @@ export class TasksService {
             email: (task.createdBy as any).email,
           }
         : task.createdBy,
-      assignedTo: (task.assignedTo || []).map((assignee: any) => ({
-        _id: assignee._id?.toString() || assignee.id,
-        name: assignee.name,
-        email: assignee.email,
-      })),
+      assignedTo: (task.assignedTo || [])
+        .filter((assignee: any) => assignee && typeof assignee === "object")
+        .map((assignee: any) => ({
+          _id: assignee._id?.toString() || assignee.id,
+          name: assignee.name || "",
+          email: assignee.email || "",
+        })),
     };
   }
 
