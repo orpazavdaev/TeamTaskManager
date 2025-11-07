@@ -90,4 +90,12 @@ export class BoardsController {
     // Only allow admins or for now, anyone authenticated (can be restricted later)
     return this.boardsService.updateAllBoardColors();
   }
+
+  @Post("reset-all")
+  @UseGuards(JwtAuthGuard)
+  resetAll(@Request() req) {
+    // TEMPORARY: Delete all boards and tasks to reset the database
+    // This should be removed after use
+    return this.boardsService.deleteAllBoardsAndTasks();
+  }
 }

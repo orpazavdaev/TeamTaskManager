@@ -156,4 +156,18 @@ export class BoardsService {
       modifiedCount: result.modifiedCount,
     };
   }
+
+  async deleteAllBoardsAndTasks() {
+    // Delete all tasks first (to avoid orphaned references)
+    const tasksResult = await this.taskModel.deleteMany({});
+
+    // Delete all boards
+    const boardsResult = await this.boardModel.deleteMany({});
+
+    return {
+      message: "All boards and tasks deleted successfully",
+      deletedTasks: tasksResult.deletedCount,
+      deletedBoards: boardsResult.deletedCount,
+    };
+  }
 }

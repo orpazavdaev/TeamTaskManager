@@ -53,7 +53,14 @@ export class ProjectsListComponent implements OnInit {
           projects.filter((p) => p._id !== update.project._id)
         );
       } else if (update.action === 'create') {
-        this.myProjects.update((projects) => [...projects, update.project]);
+        // Check if project already exists to avoid duplicates
+        this.myProjects.update((projects) => {
+          const exists = projects.some((p) => p._id === update.project._id);
+          if (exists) {
+            return projects;
+          }
+          return [...projects, update.project];
+        });
       } else if (update.action === 'update') {
         this.myProjects.update((projects) =>
           projects.map((p) => (p._id === update.project._id ? update.project : p))
@@ -138,7 +145,9 @@ export class ProjectsListComponent implements OnInit {
       this.projectsService.create({ name: name.trim() }).subscribe({
         next: (project) => {
           this.isCreating.set(false);
-          this.myProjects.update((projects) => [...projects, project]);
+          // Don't add here - WebSocket will handle it to avoid duplicates
+          // Just navigate to the new project
+          this.router.navigate(['/projects', project._id]);
         },
         error: (err) => {
           this.isCreating.set(false);
