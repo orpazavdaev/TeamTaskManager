@@ -10,7 +10,7 @@
       </div>
     </div>
     <div class="header-right" *ngIf="user(); else notAuthenticated">
-      <span class="user-name">{{ user()?.name }}</span>
+      <a routerLink="/profile" class="user-name profile-link">{{ user()?.name }}</a>
       <button
         class="theme-toggle"
         (click)="toggleTheme()"

@@ -38,6 +38,7 @@ export class BoardDetailComponent implements OnInit, OnDestroy {
   private wsService = inject(WebSocketService);
 
   boardId = signal<string>('');
+  projectId = signal<string | null>(null);
   board = signal<Board | null>(null);
   tasks = signal<Task[]>([]);
 
@@ -56,6 +57,7 @@ export class BoardDetailComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.route.params.subscribe((params) => {
       this.boardId.set(params['id']);
+      this.projectId.set(params['projectId'] || null);
       this.loadBoard();
       this.loadTasks();
     });
@@ -253,6 +255,46 @@ export class BoardDetailComponent implements OnInit, OnDestroy {
     return `priority-${priority.toLowerCase()}`;
   }
 
+  getPriorityColor(priority: string): string {
+    switch (priority?.toUpperCase()) {
+      case 'HIGH':
+        return '#e74c3c'; // Red - Hard
+      case 'MEDIUM':
+        return '#f39c12'; // Orange - Medium
+      case 'LOW':
+        return '#27ae60'; // Green - Easy
+      default:
+        return 'var(--text-secondary)';
+    }
+  }
+
+  // Generate a random color for each task border based on task ID
+  getTaskBorderColor(taskId: string): string {
+    const colors = [
+      '#d782ba' /* Sky magenta */,
+      '#e18ad4' /* Violet */,
+      '#eeb1d5' /* Lavender pink */,
+      '#efc7e5' /* Thistle */,
+      '#a8d5ba' /* Mint */,
+      '#b8e6d3' /* Light mint */,
+      '#c4e1d4' /* Pale mint */,
+      '#d4f1e4' /* Very light mint */,
+      '#f4c2c2' /* Light pink */,
+      '#f9d5d5' /* Very light pink */,
+      '#e8d4c4' /* Beige */,
+      '#f0e6d4' /* Light beige */,
+      '#d4c4e8' /* Lavender */,
+      '#e4d4f0' /* Light lavender */,
+      '#c4d4e8' /* Light blue */,
+      '#d4e4f0' /* Very light blue */,
+    ];
+    // Use task ID to generate a consistent color for each task
+    const hash = taskId.split('').reduce((acc, char) => {
+      return char.charCodeAt(0) + ((acc << 5) - acc);
+    }, 0);
+    return colors[Math.abs(hash) % colors.length];
+  }
+
   getAssigneeName(assignee: string | any): string {
     if (!assignee) {
       return '';
@@ -330,5 +372,13 @@ export class BoardDetailComponent implements OnInit, OnDestroy {
     ];
     const index = name.charCodeAt(0) % colors.length;
     return colors[index];
+  }
+
+  getBackLink(): string {
+    const projectId = this.projectId();
+    if (projectId) {
+      return `/projects/${projectId}`;
+    }
+    return '/boards';
   }
 }

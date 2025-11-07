@@ -7,6 +7,7 @@ export interface Board {
   ownerId: string | User;
   members: (string | User)[];
   color: string;
+  projectId?: string | null;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -17,4 +18,3 @@ export interface CreateBoardDto {
   color?: string;
   members?: string[];
 }
-

@@ -327,17 +327,7 @@
   background: var(--primary-light);
 }
 
-.priority-high {
-  border-left-color: #d782ba; /* Sky magenta */
-}
-
-.priority-medium {
-  border-left-color: #e18ad4; /* Violet */
-}
-
-.priority-low {
-  border-left-color: #efc7e5; /* Thistle */
-}
+/* Priority colors are now applied to the text label, not the border */
 
 .task-header {
   display: flex;

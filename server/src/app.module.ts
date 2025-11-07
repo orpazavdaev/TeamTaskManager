@@ -4,6 +4,7 @@ import { ConfigModule } from "@nestjs/config";
 import { AuthModule } from "./auth/auth.module";
 import { BoardsModule } from "./boards/boards.module";
 import { TasksModule } from "./tasks/tasks.module";
+import { ProjectsModule } from "./projects/projects.module";
 import { GatewayModule } from "./gateway.module";
 
 @Module({
@@ -18,6 +19,7 @@ import { GatewayModule } from "./gateway.module";
     AuthModule,
     BoardsModule,
     TasksModule,
+    ProjectsModule,
   ],
 })
 export class AppModule {}

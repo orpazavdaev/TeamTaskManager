@@ -5,7 +5,7 @@
       <p *ngIf="board()?.description">{{ board()?.description }}</p>
     </div>
     <div class="board-actions">
-      <a routerLink="/boards" class="btn-secondary">←</a>
+      <a [routerLink]="getBackLink()" class="btn-secondary">←</a>
       <button class="btn-primary" (click)="openTaskModal()">+ Add Task</button>
     </div>
   </div>
@@ -13,7 +13,7 @@
   <div class="kanban-board">
     <div class="kanban-column">
       <div class="column-header">
-        <h3>📋 TODO</h3>
+        <h3>📋 TO DO</h3>
         <span class="task-count">{{ todoTasks().length }}</span>
       </div>
       <div
@@ -30,11 +30,14 @@
           [cdkDragData]="task"
           class="task-card"
           [class]="getPriorityClass(task.priority)"
+          [style.border-left-color]="getTaskBorderColor(task._id)"
           (click)="openTaskModal(task)"
         >
           <div class="task-header">
             <h4>{{ task.title }}</h4>
-            <span class="task-priority">{{ task.priority }}</span>
+            <span class="task-priority" [style.color]="getPriorityColor(task.priority)">{{
+              task.priority
+            }}</span>
           </div>
           <p *ngIf="task.description" class="task-description">{{ task.description }}</p>
           <div class="task-assignees" *ngIf="task.assignedTo && task.assignedTo.length > 0">
@@ -83,11 +86,14 @@
           [cdkDragData]="task"
           class="task-card"
           [class]="getPriorityClass(task.priority)"
+          [style.border-left-color]="getTaskBorderColor(task._id)"
           (click)="openTaskModal(task)"
         >
           <div class="task-header">
             <h4>{{ task.title }}</h4>
-            <span class="task-priority">{{ task.priority }}</span>
+            <span class="task-priority" [style.color]="getPriorityColor(task.priority)">{{
+              task.priority
+            }}</span>
           </div>
           <p *ngIf="task.description" class="task-description">{{ task.description }}</p>
           <div class="task-assignees" *ngIf="task.assignedTo && task.assignedTo.length > 0">
@@ -136,11 +142,14 @@
           [cdkDragData]="task"
           class="task-card"
           [class]="getPriorityClass(task.priority)"
+          [style.border-left-color]="getTaskBorderColor(task._id)"
           (click)="openTaskModal(task)"
         >
           <div class="task-header">
             <h4>{{ task.title }}</h4>
-            <span class="task-priority">{{ task.priority }}</span>
+            <span class="task-priority" [style.color]="getPriorityColor(task.priority)">{{
+              task.priority
+            }}</span>
           </div>
           <p *ngIf="task.description" class="task-description">{{ task.description }}</p>
           <div class="task-assignees" *ngIf="task.assignedTo && task.assignedTo.length > 0">

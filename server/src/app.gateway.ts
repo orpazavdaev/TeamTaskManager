@@ -58,5 +58,9 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
   broadcastBoardUpdate(board: any, action: "create" | "update" | "delete") {
     this.server.emit("board-update", { action, board });
   }
-}
 
+  // Broadcast project updates
+  broadcastProjectUpdate(project: any, action: "create" | "update" | "delete") {
+    this.server.emit("project-update", { action, project });
+  }
+}

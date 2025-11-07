@@ -11,11 +11,13 @@ import { Board, BoardDocument } from "./schemas/board.schema";
 import { CreateBoardDto } from "./dto/create-board.dto";
 import { UpdateBoardDto } from "./dto/update-board.dto";
 import { AppGateway } from "../app.gateway";
+import { Task, TaskDocument } from "../tasks/schemas/task.schema";
 
 @Injectable()
 export class BoardsService {
   constructor(
     @InjectModel(Board.name) private boardModel: Model<BoardDocument>,
+    @InjectModel(Task.name) private taskModel: Model<TaskDocument>,
     @Inject(forwardRef(() => AppGateway))
     private appGateway: AppGateway
   ) {}
@@ -38,6 +40,56 @@ export class BoardsService {
       })
       .populate("ownerId", "name email")
       .populate("members", "name email");
+  }
+
+  async findMyBoards(userId: string) {
+    // Boards created by the user
+    return this.boardModel
+      .find({ ownerId: userId })
+      .populate("ownerId", "name email")
+      .populate("members", "name email");
+  }
+
+  async findSharedBoards(userId: string) {
+    // Get unique board IDs from tasks assigned to the user
+    const tasksWithBoards = await this.taskModel
+      .find({ assignedTo: userId })
+      .select("boardId")
+      .lean();
+
+    const boardIdsFromTasks = tasksWithBoards.map((task) => task.boardId);
+
+    // Get all unique board IDs (from members and from tasks)
+    const allBoardIds = new Set<string>();
+
+    // Add board IDs from tasks
+    boardIdsFromTasks.forEach((boardId) => {
+      allBoardIds.add(boardId.toString());
+    });
+
+    // Boards where user is a member (but not owner)
+    const memberBoards = await this.boardModel
+      .find({
+        members: userId,
+        ownerId: { $ne: userId },
+      })
+      .select("_id")
+      .lean();
+
+    memberBoards.forEach((board) => {
+      allBoardIds.add(board._id.toString());
+    });
+
+    // Get all shared boards (not owned by user, but user has access via tasks or membership)
+    const sharedBoards = await this.boardModel
+      .find({
+        _id: { $in: Array.from(allBoardIds) },
+        ownerId: { $ne: userId },
+      })
+      .populate("ownerId", "name email")
+      .populate("members", "name email");
+
+    return sharedBoards;
   }
 
   async findOne(id: string, userId: string) {

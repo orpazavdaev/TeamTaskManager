@@ -3,6 +3,7 @@ import { io, Socket } from 'socket.io-client';
 import { Observable } from 'rxjs';
 import { Task } from '../models/task.model';
 import { Board } from '../models/board.model';
+import { Project } from '../models/project.model';
 import { environment } from '../../../environments/environment';
 
 @Injectable({
@@ -62,6 +63,16 @@ export class WebSocketService {
     return new Observable((observer) => {
       if (this.socket) {
         this.socket.on('board-update', (data) => {
+          observer.next(data);
+        });
+      }
+    });
+  }
+
+  onProjectUpdate(): Observable<{ action: 'create' | 'update' | 'delete'; project: Project }> {
+    return new Observable((observer) => {
+      if (this.socket) {
+        this.socket.on('project-update', (data) => {
           observer.next(data);
         });
       }

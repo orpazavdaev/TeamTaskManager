@@ -1,0 +1,116 @@
+<div class="project-detail-container" *ngIf="project(); else loading">
+  <div class="project-header">
+    <div class="project-info">
+      <h1>{{ project()?.name }}</h1>
+      <p *ngIf="project()?.description">{{ project()?.description }}</p>
+    </div>
+    <div class="project-actions">
+      <button class="btn-primary" (click)="createBoard()" [disabled]="isCreating()">
+        <span *ngIf="!isCreating()">+ New Board</span>
+        <span *ngIf="isCreating()">Creating...</span>
+      </button>
+      <button class="btn-secondary" (click)="addExistingBoard()">+ Add Existing Board</button>
+      <a routerLink="/projects" class="btn-secondary">← Back to Projects</a>
+    </div>
+  </div>
+
+  <div *ngIf="errorMessage()" class="error-message">
+    {{ errorMessage() }}
+  </div>
+
+  <div class="active-sprint-section" *ngIf="activeBoard()">
+    <h2 class="section-title">Active Sprint</h2>
+    <div class="active-board-card" (click)="navigateToBoard(getActiveBoardId())">
+      <div
+        class="board-header"
+        [style.background-color]="(getActiveBoardColor() || '#d782ba') + '15'"
+      >
+        <h3>{{ getActiveBoardName() }}</h3>
+        <span class="active-badge">ACTIVE</span>
+      </div>
+      <div class="board-content">
+        <p *ngIf="getActiveBoardDescription()">{{ getActiveBoardDescription() }}</p>
+        <p class="board-meta">Created {{ getActiveBoardCreatedAt() | date : 'short' }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="boards-section">
+    <div class="section-header">
+      <h2 class="section-title">All Boards</h2>
+      <input
+        type="text"
+        placeholder="Search boards..."
+        [value]="searchTerm()"
+        (input)="searchTerm.set($any($event.target).value)"
+        class="search-input"
+      />
+    </div>
+
+    <div class="boards-grid" *ngIf="filteredProjectBoards().length > 0">
+      <div
+        *ngFor="let board of filteredProjectBoards()"
+        class="board-card"
+        [routerLink]="['/projects', projectId(), 'boards', board._id]"
+        [style.border-color]="board.color || '#d782ba'"
+      >
+        <div class="board-header" [style.background-color]="(board.color || '#d782ba') + '15'">
+          <h3>{{ board.name }}</h3>
+          <div class="board-actions">
+            <button
+              *ngIf="activeBoard()?._id !== board._id"
+              class="btn-icon"
+              (click)="setActiveBoard(board._id); $event.stopPropagation()"
+              title="Set as Active Sprint"
+            >
+              ⭐
+            </button>
+            <button
+              class="btn-icon"
+              (click)="removeBoardFromProject(board._id); $event.stopPropagation()"
+              title="Remove from Project"
+            >
+              🗑️
+            </button>
+          </div>
+        </div>
+        <div class="board-content">
+          <p *ngIf="board.description">{{ board.description }}</p>
+          <p class="board-meta">Created {{ board.createdAt | date : 'short' }}</p>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="filteredProjectBoards().length === 0" class="empty-state">
+      <p>No boards in this project. Create your first board!</p>
+    </div>
+  </div>
+</div>
+
+<ng-template #loading>
+  <div class="loading-container">
+    <div class="loading">Loading project...</div>
+  </div>
+</ng-template>
+
+<app-input-dialog
+  *ngIf="showCreateDialog()"
+  title="Create New Board"
+  label="Board Name"
+  placeholder="Enter board name"
+  confirmText="Create"
+  cancelText="Cancel"
+  (confirm)="confirmCreateBoard($event)"
+  (cancel)="cancelCreateBoard()"
+></app-input-dialog>
+
+<app-select-dialog
+  *ngIf="showAddBoardDialog()"
+  title="Add Existing Board"
+  label="Select Board"
+  [options]="getAvailableBoardOptions()"
+  confirmText="Add"
+  cancelText="Cancel"
+  (confirm)="confirmAddBoard($event)"
+  (cancel)="cancelAddBoard()"
+></app-select-dialog>

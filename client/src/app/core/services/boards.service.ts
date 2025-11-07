@@ -35,4 +35,12 @@ export class BoardsService {
   updateAllColors(): Observable<any> {
     return this.http.post(`${this.API_URL}/update-colors`, {});
   }
+
+  getMyBoards(): Observable<Board[]> {
+    return this.http.get<Board[]>(`${this.API_URL}/my-boards`);
+  }
+
+  getSharedBoards(): Observable<Board[]> {
+    return this.http.get<Board[]>(`${this.API_URL}/shared-boards`);
+  }
 }

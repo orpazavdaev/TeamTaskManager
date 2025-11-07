@@ -26,7 +26,7 @@ export class Task {
   @Prop({ required: true, enum: TaskStatus, default: TaskStatus.TODO })
   status: TaskStatus;
 
-  @Prop({ required: true })
+  @Prop({ required: true, ref: "Board" })
   boardId: MongooseSchema.Types.ObjectId;
 
   @Prop({ required: true, ref: "User" })

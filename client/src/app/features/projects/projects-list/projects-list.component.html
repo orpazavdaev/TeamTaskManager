@@ -1,0 +1,113 @@
+<div class="projects-container">
+  <header class="projects-header">
+    <h1>My Projects</h1>
+    <div class="header-actions">
+      <input
+        type="text"
+        placeholder="Search projects..."
+        [value]="searchTerm()"
+        (input)="searchTerm.set($any($event.target).value)"
+        class="search-input"
+      />
+      <button class="btn-primary" (click)="createProject()" [disabled]="isCreating()">
+        <span *ngIf="!isCreating()">+ New Project</span>
+        <span *ngIf="isCreating()">Creating...</span>
+      </button>
+    </div>
+  </header>
+
+  <div *ngIf="errorMessage()" class="error-message">
+    {{ errorMessage() }}
+  </div>
+
+  <div *ngIf="!isLoading(); else loading">
+    <!-- My Projects Section -->
+    <section class="projects-section" *ngIf="filteredMyProjects().length > 0">
+      <h2 class="section-title">My Projects</h2>
+      <div class="projects-grid">
+        <div
+          *ngFor="let project of filteredMyProjects()"
+          class="project-card"
+          (click)="navigateToProject(project._id)"
+          [style.border-color]="project.color || '#d782ba'"
+        >
+          <div
+            class="project-header"
+            [style.background-color]="(project.color || '#d782ba') + '15'"
+          >
+            <h3>{{ project.name }}</h3>
+            <span class="active-sprint" *ngIf="project.activeBoardId"> Active Sprint </span>
+          </div>
+          <div class="project-content">
+            <p *ngIf="project.description">{{ project.description }}</p>
+            <div class="project-stats">
+              <span class="stat">
+                <strong>{{ project.boards?.length || 0 }}</strong> Boards
+              </span>
+              <span class="stat" *ngIf="project.activeBoardId">
+                <strong>1</strong> Active Sprint
+              </span>
+            </div>
+            <p class="project-meta">Created {{ project.createdAt | date : 'short' }}</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Shared Projects Section -->
+    <section class="projects-section" *ngIf="filteredSharedProjects().length > 0">
+      <h2 class="section-title">Shared Projects</h2>
+      <div class="projects-grid">
+        <div
+          *ngFor="let project of filteredSharedProjects()"
+          class="project-card"
+          (click)="navigateToProject(project._id)"
+          [style.border-color]="project.color || '#d782ba'"
+        >
+          <div
+            class="project-header"
+            [style.background-color]="(project.color || '#d782ba') + '15'"
+          >
+            <h3>{{ project.name }}</h3>
+            <span class="active-sprint" *ngIf="project.activeBoardId"> Active Sprint </span>
+          </div>
+          <div class="project-content">
+            <p *ngIf="project.description">{{ project.description }}</p>
+            <div class="project-stats">
+              <span class="stat">
+                <strong>{{ project.boards?.length || 0 }}</strong> Boards
+              </span>
+              <span class="stat" *ngIf="project.activeBoardId">
+                <strong>1</strong> Active Sprint
+              </span>
+            </div>
+            <p class="project-meta">Created {{ project.createdAt | date : 'short' }}</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Empty State -->
+    <div
+      *ngIf="filteredMyProjects().length === 0 && filteredSharedProjects().length === 0"
+      class="empty-state"
+    >
+      <p>No projects found. Create your first project!</p>
+    </div>
+  </div>
+
+  <ng-template #loading>
+    <div class="loading">Loading projects...</div>
+  </ng-template>
+</div>
+
+<app-input-dialog
+  *ngIf="showCreateDialog()"
+  title="Create New Project"
+  label="Project Name"
+  placeholder="Enter project name"
+  confirmText="Create"
+  cancelText="Cancel"
+  (confirm)="confirmCreateProject($event)"
+  (cancel)="cancelCreateProject()"
+></app-input-dialog>

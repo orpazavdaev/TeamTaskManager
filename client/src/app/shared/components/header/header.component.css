@@ -57,6 +57,16 @@
   font-size: 14px;
 }
 
+.profile-link {
+  text-decoration: none;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.profile-link:hover {
+  color: var(--primary-color);
+}
+
 .theme-toggle {
   background: none;
   border: none;

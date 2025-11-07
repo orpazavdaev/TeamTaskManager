@@ -247,4 +247,43 @@ export class TasksService {
     );
     return { message: "Task deleted successfully" };
   }
+
+  async findByUser(userId: string) {
+    const tasks = await this.taskModel
+      .find({ assignedTo: userId })
+      .populate("createdBy", "name email")
+      .populate("assignedTo", "name email")
+      .populate("boardId", "name color")
+      .sort({ createdAt: -1 })
+      .lean();
+
+    return tasks.map((task) => ({
+      ...task,
+      _id: task._id.toString(),
+      boardId: task.boardId
+        ? {
+            _id:
+              (task.boardId as any)._id?.toString() || (task.boardId as any).id,
+            name: (task.boardId as any).name,
+            color: (task.boardId as any).color,
+          }
+        : task.boardId,
+      createdBy: task.createdBy
+        ? {
+            _id:
+              (task.createdBy as any)._id?.toString() ||
+              (task.createdBy as any).id,
+            name: (task.createdBy as any).name,
+            email: (task.createdBy as any).email,
+          }
+        : task.createdBy,
+      assignedTo: (task.assignedTo || [])
+        .filter((assignee: any) => assignee && typeof assignee === "object")
+        .map((assignee: any) => ({
+          _id: assignee._id?.toString() || assignee.id,
+          name: assignee.name || "",
+          email: assignee.email || "",
+        })),
+    }));
+  }
 }

@@ -55,6 +55,16 @@ export class BoardsController {
     return this.boardsService.findAll(req.user.userId);
   }
 
+  @Get("my-boards")
+  findMyBoards(@Request() req) {
+    return this.boardsService.findMyBoards(req.user.userId);
+  }
+
+  @Get("shared-boards")
+  findSharedBoards(@Request() req) {
+    return this.boardsService.findSharedBoards(req.user.userId);
+  }
+
   @Get(":id")
   findOne(@Param("id") id: string, @Request() req) {
     return this.boardsService.findOne(id, req.user.userId);

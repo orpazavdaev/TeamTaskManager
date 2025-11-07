@@ -26,6 +26,11 @@ export class TasksController {
     return this.tasksService.create(createTaskDto, req.user.userId);
   }
 
+  @Get("user/my-tasks")
+  getMyTasks(@Request() req) {
+    return this.tasksService.findByUser(req.user.userId);
+  }
+
   @Get()
   findAll(@Query("boardId") boardId: string, @Request() req) {
     return this.tasksService.findAll(boardId, req.user.userId);
@@ -59,4 +64,3 @@ export class TasksController {
     return this.tasksService.remove(id, req.user.userId);
   }
 }
-

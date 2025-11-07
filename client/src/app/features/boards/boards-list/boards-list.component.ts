@@ -20,7 +20,8 @@ export class BoardsListComponent implements OnInit {
   private wsService = inject(WebSocketService);
   private authService = inject(AuthService);
 
-  boards = signal<Board[]>([]);
+  myBoards = signal<Board[]>([]);
+  sharedBoards = signal<Board[]>([]);
   isLoading = signal(true);
   searchTerm = signal('');
   isCreating = signal(false);
@@ -55,11 +56,16 @@ export class BoardsListComponent implements OnInit {
     // Listen for board updates
     this.wsService.onBoardUpdate().subscribe((update) => {
       if (update.action === 'delete') {
-        this.boards.update((boards) => boards.filter((b) => b._id !== update.board._id));
+        this.myBoards.update((boards) => boards.filter((b) => b._id !== update.board._id));
+        this.sharedBoards.update((boards) => boards.filter((b) => b._id !== update.board._id));
       } else if (update.action === 'create') {
-        this.boards.update((boards) => [...boards, update.board]);
+        // New boards are always "my boards"
+        this.myBoards.update((boards) => [...boards, update.board]);
       } else if (update.action === 'update') {
-        this.boards.update((boards) =>
+        this.myBoards.update((boards) =>
+          boards.map((b) => (b._id === update.board._id ? update.board : b))
+        );
+        this.sharedBoards.update((boards) =>
           boards.map((b) => (b._id === update.board._id ? update.board : b))
         );
       }
@@ -93,9 +99,11 @@ export class BoardsListComponent implements OnInit {
     }
 
     this.isLoading.set(true);
-    this.boardsService.getAll().subscribe({
+
+    // Load both my boards and shared boards
+    this.boardsService.getMyBoards().subscribe({
       next: (boards) => {
-        this.boards.set(boards);
+        this.myBoards.set(boards);
         this.isLoading.set(false);
         this.errorMessage.set('');
       },
@@ -109,12 +117,31 @@ export class BoardsListComponent implements OnInit {
         }
       },
     });
+
+    this.boardsService.getSharedBoards().subscribe({
+      next: (boards) => {
+        this.sharedBoards.set(boards);
+      },
+      error: (err) => {
+        // Silently fail for shared boards - not critical
+        console.error('Failed to load shared boards:', err);
+      },
+    });
   }
 
-  filteredBoards() {
+  filteredMyBoards() {
     const term = this.searchTerm().toLowerCase();
-    if (!term) return this.boards();
-    return this.boards().filter(
+    if (!term) return this.myBoards();
+    return this.myBoards().filter(
+      (board) =>
+        board.name.toLowerCase().includes(term) || board.description?.toLowerCase().includes(term)
+    );
+  }
+
+  filteredSharedBoards() {
+    const term = this.searchTerm().toLowerCase();
+    if (!term) return this.sharedBoards();
+    return this.sharedBoards().filter(
       (board) =>
         board.name.toLowerCase().includes(term) || board.description?.toLowerCase().includes(term)
     );
@@ -133,7 +160,7 @@ export class BoardsListComponent implements OnInit {
       this.boardsService.create({ name: name.trim() }).subscribe({
         next: (board) => {
           this.isCreating.set(false);
-          this.boards.update((boards) => [...boards, board]);
+          this.myBoards.update((boards) => [...boards, board]);
           this.router.navigate(['/boards', board._id]);
         },
         error: (err) => {

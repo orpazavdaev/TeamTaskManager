@@ -28,7 +28,6 @@ export class HeaderComponent {
   }
 
   navigateHome(): void {
-    this.router.navigate(['/boards']);
+    this.router.navigate(['/projects']);
   }
 }
-

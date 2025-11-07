@@ -42,4 +42,3 @@ export interface MoveTaskDto {
   status: TaskStatus;
   order: number;
 }
-

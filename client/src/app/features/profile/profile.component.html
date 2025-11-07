@@ -1,0 +1,153 @@
+<div class="profile-container" *ngIf="user(); else notAuthenticated">
+  <div class="profile-header">
+    <h1>My Profile</h1>
+    <p class="user-info">{{ user()?.name }} ({{ user()?.email }})</p>
+  </div>
+
+  <div class="profile-stats">
+    <div class="stat-card">
+      <div class="stat-number">{{ tasks().length }}</div>
+      <div class="stat-label">Total Tasks</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">{{ todoTasks().length }}</div>
+      <div class="stat-label">To Do</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">{{ inProgressTasks().length }}</div>
+      <div class="stat-label">In Progress</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-number">{{ doneTasks().length }}</div>
+      <div class="stat-label">Done</div>
+    </div>
+  </div>
+
+  <div class="tasks-section" *ngIf="!loading() && !error()">
+    <div class="tasks-column" *ngIf="todoTasks().length > 0">
+      <h2 class="column-title">{{ getStatusLabel('TODO') }}</h2>
+      <div class="tasks-list">
+        <div
+          *ngFor="let task of todoTasks()"
+          class="task-card"
+          [class]="getPriorityClass(task.priority)"
+          [style.border-left-color]="getTaskBorderColor(task._id)"
+          (click)="navigateToBoard(task.boardId)"
+        >
+          <div class="task-header">
+            <h3 class="task-title">{{ task.title }}</h3>
+            <span class="task-priority" [style.color]="getPriorityColor(task.priority)">{{
+              task.priority
+            }}</span>
+          </div>
+          <p class="task-description" *ngIf="task.description">
+            {{ task.description }}
+          </p>
+          <div class="task-footer">
+            <div class="task-board" *ngIf="task.boardId">
+              <span class="board-badge" [style.background-color]="getBoardColor(task.boardId)">
+                {{ getBoardName(task.boardId) }}
+              </span>
+            </div>
+            <div class="task-meta">
+              <span class="task-date" *ngIf="task.createdAt">
+                {{ task.createdAt | date : 'short' }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tasks-column" *ngIf="inProgressTasks().length > 0">
+      <h2 class="column-title">{{ getStatusLabel('IN_PROGRESS') }}</h2>
+      <div class="tasks-list">
+        <div
+          *ngFor="let task of inProgressTasks()"
+          class="task-card"
+          [class]="getPriorityClass(task.priority)"
+          [style.border-left-color]="getTaskBorderColor(task._id)"
+          (click)="navigateToBoard(task.boardId)"
+        >
+          <div class="task-header">
+            <h3 class="task-title">{{ task.title }}</h3>
+            <span class="task-priority" [style.color]="getPriorityColor(task.priority)">{{
+              task.priority
+            }}</span>
+          </div>
+          <p class="task-description" *ngIf="task.description">
+            {{ task.description }}
+          </p>
+          <div class="task-footer">
+            <div class="task-board" *ngIf="task.boardId">
+              <span class="board-badge" [style.background-color]="getBoardColor(task.boardId)">
+                {{ getBoardName(task.boardId) }}
+              </span>
+            </div>
+            <div class="task-meta">
+              <span class="task-date" *ngIf="task.createdAt">
+                {{ task.createdAt | date : 'short' }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tasks-column" *ngIf="doneTasks().length > 0">
+      <h2 class="column-title">{{ getStatusLabel('DONE') }}</h2>
+      <div class="tasks-list">
+        <div
+          *ngFor="let task of doneTasks()"
+          class="task-card"
+          [class]="getPriorityClass(task.priority)"
+          [style.border-left-color]="getTaskBorderColor(task._id)"
+          (click)="navigateToBoard(task.boardId)"
+        >
+          <div class="task-header">
+            <h3 class="task-title">{{ task.title }}</h3>
+            <span class="task-priority" [style.color]="getPriorityColor(task.priority)">{{
+              task.priority
+            }}</span>
+          </div>
+          <p class="task-description" *ngIf="task.description">
+            {{ task.description }}
+          </p>
+          <div class="task-footer">
+            <div class="task-board" *ngIf="task.boardId">
+              <span class="board-badge" [style.background-color]="getBoardColor(task.boardId)">
+                {{ getBoardName(task.boardId) }}
+              </span>
+            </div>
+            <div class="task-meta">
+              <span class="task-date" *ngIf="task.createdAt">
+                {{ task.createdAt | date : 'short' }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="no-tasks" *ngIf="tasks().length === 0">
+      <p>You don't have any assigned tasks yet.</p>
+      <a routerLink="/boards" class="btn-primary">Go to Boards</a>
+    </div>
+  </div>
+
+  <div class="loading" *ngIf="loading()">
+    <p>Loading your tasks...</p>
+  </div>
+
+  <div class="error" *ngIf="error()">
+    <p>{{ error() }}</p>
+    <button class="btn-primary" (click)="loadTasks()">Retry</button>
+  </div>
+</div>
+
+<ng-template #notAuthenticated>
+  <div class="profile-container">
+    <p>Please log in to view your profile.</p>
+    <a routerLink="/auth/login" class="btn-primary">Login</a>
+  </div>
+</ng-template>
