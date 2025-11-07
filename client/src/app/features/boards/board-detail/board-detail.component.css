@@ -14,6 +14,14 @@
   gap: 20px;
 }
 
+.board-info {
+  order: 2;
+}
+
+.board-actions {
+  order: 1;
+}
+
 .board-info h1 {
   margin: 0 0 8px 0;
   font-size: 32px;
@@ -36,8 +44,8 @@
   padding: 6px 12px;
   background: var(--primary-color);
   color: white;
-  border: none;
-  border-radius: 3px;
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
   font-size: 14px;
   font-weight: 500;
   cursor: pointer;
@@ -91,13 +99,18 @@
     margin-bottom: 24px;
   }
 
-  .board-info h1 {
-    font-size: 24px;
+  .board-info {
+    order: 2;
   }
 
   .board-actions {
+    order: 1;
     flex-direction: column;
     width: 100%;
+  }
+
+  .board-info h1 {
+    font-size: 24px;
   }
 
   .btn-primary,

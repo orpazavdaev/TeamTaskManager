@@ -5,8 +5,8 @@
       <p *ngIf="board()?.description">{{ board()?.description }}</p>
     </div>
     <div class="board-actions">
+      <a routerLink="/boards" class="btn-secondary">←</a>
       <button class="btn-primary" (click)="openTaskModal()">+ Add Task</button>
-      <a routerLink="/boards" class="btn-secondary">← Back to Boards</a>
     </div>
   </div>
 
