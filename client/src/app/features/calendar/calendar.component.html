@@ -1,0 +1,208 @@
+<div class="calendar-container">
+  <div class="calendar-header">
+    <h1>📅 Calendar</h1>
+    <div class="calendar-controls">
+      <button class="btn-secondary" (click)="previousMonth()">← Previous</button>
+      <button class="btn-secondary" (click)="goToToday()">Today</button>
+      <button class="btn-secondary" (click)="nextMonth()">Next →</button>
+      <h2 class="month-year">{{ getMonthYear() }}</h2>
+    </div>
+    <div class="calendar-filters">
+      <select
+        class="filter-select"
+        [value]="selectedProject() || ''"
+        (change)="onProjectFilterChange($any($event.target).value || null)"
+      >
+        <option value="">All Projects</option>
+        <option *ngFor="let project of projects()" [value]="project._id">
+          {{ project.name }}
+        </option>
+      </select>
+      <button class="btn-primary" (click)="openCreateDialog()">+ Add Event</button>
+    </div>
+  </div>
+
+  <div *ngIf="errorMessage()" class="error-message">
+    {{ errorMessage() }}
+  </div>
+
+  <div *ngIf="isLoading(); else calendarContent" class="loading-container">
+    <div class="loading">Loading calendar...</div>
+  </div>
+
+  <ng-template #calendarContent>
+    <div class="calendar-grid">
+      <div class="calendar-weekdays">
+        <div class="weekday" *ngFor="let day of ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']">
+          {{ day }}
+        </div>
+      </div>
+      <div class="calendar-days">
+        <div
+          *ngFor="let day of calendarDays()"
+          class="calendar-day"
+          [class.other-month]="!isCurrentMonth(day)"
+          [class.today]="isTodayDate(day)"
+          (click)="openCreateDialog(day)"
+        >
+          <div class="day-number">{{ day.getDate() }}</div>
+          <div class="day-events">
+            <div
+              *ngFor="let event of getEventsForDay(day)"
+              class="event-item"
+              [style.background-color]="event.color + '20'"
+              [style.border-left-color]="event.color"
+              (click)="openEditDialog(event); $event.stopPropagation()"
+              [title]="event.title + (event.description ? ': ' + event.description : '')"
+            >
+              <span class="event-time">{{ formatEventTime(event) }}</span>
+              <span class="event-title">{{ event.title }}</span>
+              <span *ngIf="isMultiDayEvent(event)" class="event-multi-day">📅</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+</div>
+
+<!-- Create Event Dialog -->
+<div *ngIf="showCreateDialog()" class="dialog-overlay" (click)="closeCreateDialog()">
+  <div class="dialog-content" (click)="$event.stopPropagation()">
+    <div class="dialog-header">
+      <h3>Create Event</h3>
+      <button class="btn-close" (click)="closeCreateDialog()">×</button>
+    </div>
+    <form [formGroup]="eventForm" (ngSubmit)="createEvent()" class="dialog-form">
+      <div class="form-group">
+        <label>Title *</label>
+        <input type="text" formControlName="title" class="form-input" required />
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <textarea formControlName="description" class="form-textarea" rows="3"></textarea>
+      </div>
+      <div class="form-group">
+        <label>
+          <input type="checkbox" formControlName="isAllDay" class="checkbox-input" />
+          All Day Event
+        </label>
+      </div>
+      <div class="form-group">
+        <label>Start Date *</label>
+        <input type="date" formControlName="date" class="form-input" required />
+      </div>
+      <div class="form-group">
+        <label>End Date (for multi-day events)</label>
+        <input type="date" formControlName="endDate" class="form-input" />
+      </div>
+      <div class="form-group" *ngIf="!eventForm.value.isAllDay">
+        <label>Start Time</label>
+        <input type="time" formControlName="startTime" class="form-input" />
+      </div>
+      <div class="form-group" *ngIf="!eventForm.value.isAllDay">
+        <label>End Time</label>
+        <input type="time" formControlName="endTime" class="form-input" />
+      </div>
+      <div class="form-group">
+        <label>Type *</label>
+        <select formControlName="type" class="form-select" required>
+          <option *ngFor="let option of getEventTypeOptions()" [value]="option.value">
+            {{ option.label }}
+          </option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Project *</label>
+        <select formControlName="projectId" class="form-select" required>
+          <option value="">Select Project</option>
+          <option *ngFor="let project of projects()" [value]="project._id">
+            {{ project.name }}
+          </option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Color</label>
+        <input type="color" formControlName="color" class="form-color" />
+      </div>
+      <div class="dialog-actions">
+        <button type="button" class="btn-cancel" (click)="closeCreateDialog()">Cancel</button>
+        <button type="submit" class="btn-confirm" [disabled]="!eventForm.valid">Create</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Edit Event Dialog -->
+<div *ngIf="showEditDialog()" class="dialog-overlay" (click)="closeEditDialog()">
+  <div class="dialog-content" (click)="$event.stopPropagation()">
+    <div class="dialog-header">
+      <h3>Edit Event</h3>
+      <button class="btn-close" (click)="closeEditDialog()">×</button>
+    </div>
+    <form [formGroup]="eventForm" (ngSubmit)="updateEvent()" class="dialog-form">
+      <div class="form-group">
+        <label>Title *</label>
+        <input type="text" formControlName="title" class="form-input" required />
+      </div>
+      <div class="form-group">
+        <label>Description</label>
+        <textarea formControlName="description" class="form-textarea" rows="3"></textarea>
+      </div>
+      <div class="form-group">
+        <label>
+          <input type="checkbox" formControlName="isAllDay" class="checkbox-input" />
+          All Day Event
+        </label>
+      </div>
+      <div class="form-group">
+        <label>Start Date *</label>
+        <input type="date" formControlName="date" class="form-input" required />
+      </div>
+      <div class="form-group">
+        <label>End Date (for multi-day events)</label>
+        <input type="date" formControlName="endDate" class="form-input" />
+      </div>
+      <div class="form-group" *ngIf="!eventForm.value.isAllDay">
+        <label>Start Time</label>
+        <input type="time" formControlName="startTime" class="form-input" />
+      </div>
+      <div class="form-group" *ngIf="!eventForm.value.isAllDay">
+        <label>End Time</label>
+        <input type="time" formControlName="endTime" class="form-input" />
+      </div>
+      <div class="form-group">
+        <label>Type *</label>
+        <select formControlName="type" class="form-select" required>
+          <option *ngFor="let option of getEventTypeOptions()" [value]="option.value">
+            {{ option.label }}
+          </option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Project *</label>
+        <select formControlName="projectId" class="form-select" required>
+          <option value="">Select Project</option>
+          <option *ngFor="let project of projects()" [value]="project._id">
+            {{ project.name }}
+          </option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Color</label>
+        <input type="color" formControlName="color" class="form-color" />
+      </div>
+      <div class="dialog-actions">
+        <button
+          type="button"
+          class="btn-danger"
+          (click)="deleteEvent(selectedEvent()!); closeEditDialog()"
+        >
+          Delete
+        </button>
+        <button type="button" class="btn-cancel" (click)="closeEditDialog()">Cancel</button>
+        <button type="submit" class="btn-confirm" [disabled]="!eventForm.valid">Update</button>
+      </div>
+    </form>
+  </div>
+</div>

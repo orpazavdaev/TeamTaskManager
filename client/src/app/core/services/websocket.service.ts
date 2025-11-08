@@ -78,4 +78,14 @@ export class WebSocketService {
       }
     });
   }
+
+  onCalendarEventUpdate(): Observable<{ action: 'create' | 'update' | 'delete'; event: any }> {
+    return new Observable((observer) => {
+      if (this.socket) {
+        this.socket.on('calendar-event-update', (data) => {
+          observer.next(data);
+        });
+      }
+    });
+  }
 }

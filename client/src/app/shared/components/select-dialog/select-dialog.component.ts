@@ -12,7 +12,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 export class SelectDialogComponent implements OnInit {
   @Input() title: string = 'Select option';
   @Input() label: string = 'Select';
-  @Input() options: { value: string; label: string }[] = [];
+  @Input() options: { value: string; label: string; disabled?: boolean }[] = [];
   @Input() confirmText: string = 'Confirm';
   @Input() cancelText: string = 'Cancel';
   @Output() confirm = new EventEmitter<string>();
@@ -28,9 +28,10 @@ export class SelectDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // Set first option as default if available
-    if (this.options.length > 0) {
-      this.form.patchValue({ selected: this.options[0].value });
+    // Set first non-disabled option as default if available
+    const firstAvailableOption = this.options.find((opt) => !opt.disabled);
+    if (firstAvailableOption) {
+      this.form.patchValue({ selected: firstAvailableOption.value });
     }
   }
 

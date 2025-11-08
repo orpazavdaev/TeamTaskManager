@@ -398,13 +398,32 @@ export class ProjectDetailComponent implements OnInit, OnDestroy {
   getAvailableUserOptions() {
     const project = this.project();
     if (!project) return [];
-    const memberIds = this.getProjectMembers().map((m) => m.id);
-    const ownerId = this.getProjectOwner()?.id;
-    return this.allUsers()
-      .filter((user) => user.id !== ownerId && !memberIds.includes(user.id))
-      .map((user) => ({
-        value: user.id,
-        label: `${user.name} (${user.email})`,
-      }));
+    const owner = this.getProjectOwner();
+    const members = this.getProjectMembers();
+    const ownerId = owner?.id;
+    const memberIds = members.map((m) => m.id);
+
+    // Return all users, marking owner and existing members as disabled
+    return this.allUsers().map((user) => {
+      if (user.id === ownerId) {
+        return {
+          value: user.id,
+          label: `${user.name} (${user.email}) - Owner`,
+          disabled: true,
+        };
+      } else if (memberIds.includes(user.id)) {
+        return {
+          value: user.id,
+          label: `${user.name} (${user.email}) - Already a member`,
+          disabled: true,
+        };
+      } else {
+        return {
+          value: user.id,
+          label: `${user.name} (${user.email})`,
+          disabled: false,
+        };
+      }
+    });
   }
 }

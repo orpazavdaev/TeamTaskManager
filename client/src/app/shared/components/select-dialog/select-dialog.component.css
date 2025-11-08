@@ -89,6 +89,12 @@
   border-color: #e74c3c;
 }
 
+.select-input option:disabled {
+  color: var(--text-secondary);
+  font-style: italic;
+  background-color: var(--hover-bg);
+}
+
 .dialog-actions {
   display: flex;
   justify-content: flex-end;

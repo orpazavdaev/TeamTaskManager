@@ -10,6 +10,11 @@
       </div>
     </div>
     <div class="header-right" *ngIf="user(); else notAuthenticated">
+      <nav class="header-nav">
+        <a routerLink="/projects" class="nav-link">Projects</a>
+        <a routerLink="/calendar" class="nav-link">📅 Calendar</a>
+        <a routerLink="/profile" class="nav-link">Profile</a>
+      </nav>
       <a routerLink="/profile" class="user-name profile-link">{{ user()?.name }}</a>
       <button
         class="theme-toggle"

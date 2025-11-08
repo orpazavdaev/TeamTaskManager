@@ -93,13 +93,68 @@ export class BoardsService {
   }
 
   async findOne(id: string, userId: string) {
-    const board = await this.boardModel
+    console.log("Finding board with ID:", id, "for user:", userId);
+
+    // First, try to find board by direct access (owner or member)
+    let board = await this.boardModel
       .findOne({
         _id: id,
         $or: [{ ownerId: userId }, { members: userId }],
       })
       .populate("ownerId", "name email")
-      .populate("members", "name email");
+      .populate("members", "name email")
+      .populate("projectId", "name members ownerId");
+
+    console.log("Board found by direct access:", board ? "Yes" : "No");
+
+    // If not found, check if board belongs to a project the user is a member of
+    if (!board) {
+      const boardWithProject = await this.boardModel
+        .findById(id)
+        .populate("ownerId", "name email")
+        .populate("members", "name email")
+        .populate({
+          path: "projectId",
+          select: "name members ownerId",
+          populate: [
+            { path: "ownerId", select: "name email" },
+            { path: "members", select: "name email" },
+          ],
+        });
+
+      if (boardWithProject && boardWithProject.projectId) {
+        const project = boardWithProject.projectId as any;
+        const isProjectOwner = project.ownerId?.toString() === userId;
+        const isProjectMember = project.members?.some(
+          (member: any) =>
+            member._id?.toString() === userId || member.toString() === userId
+        );
+
+        console.log("Board belongs to project:", project.name);
+        console.log("User is project owner:", isProjectOwner);
+        console.log("User is project member:", isProjectMember);
+
+        if (isProjectOwner || isProjectMember) {
+          board = boardWithProject;
+          console.log("Board access granted through project membership");
+        }
+      }
+    }
+
+    if (board) {
+      console.log("Board ownerId:", board.ownerId);
+      console.log("Board members:", board.members);
+    } else {
+      // Check if board exists at all
+      const boardExists = await this.boardModel.findById(id);
+      console.log("Board exists in DB:", boardExists ? "Yes" : "No");
+      if (boardExists) {
+        console.log("Board exists but user does not have access");
+        console.log("Board ownerId:", boardExists.ownerId);
+        console.log("Board members:", boardExists.members);
+        console.log("Board projectId:", boardExists.projectId);
+      }
+    }
 
     if (!board) {
       throw new NotFoundException("Board not found");

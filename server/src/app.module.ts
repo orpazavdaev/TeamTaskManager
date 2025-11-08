@@ -5,6 +5,7 @@ import { AuthModule } from "./auth/auth.module";
 import { BoardsModule } from "./boards/boards.module";
 import { TasksModule } from "./tasks/tasks.module";
 import { ProjectsModule } from "./projects/projects.module";
+import { CalendarModule } from "./calendar/calendar.module";
 import { GatewayModule } from "./gateway.module";
 
 @Module({
@@ -20,6 +21,7 @@ import { GatewayModule } from "./gateway.module";
     BoardsModule,
     TasksModule,
     ProjectsModule,
+    CalendarModule,
   ],
 })
 export class AppModule {}

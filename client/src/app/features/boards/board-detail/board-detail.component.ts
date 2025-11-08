@@ -86,20 +86,45 @@ export class BoardDetailComponent implements OnInit, OnDestroy {
   }
 
   loadBoard(): void {
-    this.boardsService.getById(this.boardId()).subscribe({
-      next: (board) => this.board.set(board),
-      error: () => this.router.navigate(['/boards']),
+    const boardId = this.boardId();
+    if (!boardId) {
+      console.error('Board ID is missing');
+      this.router.navigate(['/boards']);
+      return;
+    }
+    console.log('Loading board with ID:', boardId);
+    this.boardsService.getById(boardId).subscribe({
+      next: (board) => {
+        console.log('Board loaded successfully:', board);
+        this.board.set(board);
+      },
+      error: (err) => {
+        console.error('Failed to load board:', err);
+        if (err.status === 404) {
+          console.error('Board not found or access denied');
+        }
+        this.router.navigate(['/boards']);
+      },
     });
   }
 
   loadTasks(): void {
+    const boardId = this.boardId();
+    if (!boardId) {
+      console.error('Board ID is missing for loading tasks');
+      this.isLoading.set(false);
+      return;
+    }
     this.isLoading.set(true);
-    this.tasksService.getByBoard(this.boardId()).subscribe({
+    console.log('Loading tasks for board ID:', boardId);
+    this.tasksService.getByBoard(boardId).subscribe({
       next: (tasks) => {
+        console.log('Tasks loaded successfully:', tasks.length, 'tasks');
         this.tasks.set(tasks);
         this.isLoading.set(false);
       },
-      error: () => {
+      error: (err) => {
+        console.error('Failed to load tasks:', err);
         this.isLoading.set(false);
       },
     });
