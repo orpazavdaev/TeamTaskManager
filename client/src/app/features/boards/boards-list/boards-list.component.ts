@@ -151,7 +151,8 @@ export class BoardsListComponent implements OnInit {
     this.showCreateDialog.set(true);
   }
 
-  confirmCreateBoard(name: string): void {
+  confirmCreateBoard(value: string | { name: string; isPublic: boolean }): void {
+    const name = typeof value === 'string' ? value : value.name;
     if (name && name.trim()) {
       this.isCreating.set(true);
       this.errorMessage.set('');

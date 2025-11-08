@@ -10,6 +10,7 @@ export interface Project {
   boards: (string | Board)[];
   activeBoardId: string | Board | null;
   color: string;
+  isPublic?: boolean;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -18,6 +19,7 @@ export interface CreateProjectDto {
   name: string;
   description?: string;
   members?: string[];
+  isPublic?: boolean;
 }
 
 export interface UpdateProjectDto {
@@ -25,4 +27,5 @@ export interface UpdateProjectDto {
   description?: string;
   members?: string[];
   activeBoardId?: string;
+  isPublic?: boolean;
 }

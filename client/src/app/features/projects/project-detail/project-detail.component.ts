@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ProjectsService } from '../../../core/services/projects.service';
 import { BoardsService } from '../../../core/services/boards.service';
+import { UsersService } from '../../../core/services/users.service';
+import { User } from '../../../core/models/user.model';
 import { Project } from '../../../core/models/project.model';
 import { Board } from '../../../core/models/board.model';
 import { WebSocketService } from '../../../core/services/websocket.service';
@@ -22,6 +24,7 @@ export class ProjectDetailComponent implements OnInit, OnDestroy {
   private router = inject(Router);
   private projectsService = inject(ProjectsService);
   private boardsService = inject(BoardsService);
+  private usersService = inject(UsersService);
   private wsService = inject(WebSocketService);
   private authService = inject(AuthService);
 
@@ -34,6 +37,8 @@ export class ProjectDetailComponent implements OnInit, OnDestroy {
   errorMessage = signal('');
   showCreateDialog = signal(false);
   showAddBoardDialog = signal(false);
+  showAddMemberDialog = signal(false);
+  allUsers = signal<User[]>([]);
 
   // Get boards that belong to this project
   projectBoards = computed(() => {
@@ -68,6 +73,7 @@ export class ProjectDetailComponent implements OnInit, OnDestroy {
       this.projectId.set(params['id']);
       this.loadProject();
       this.loadBoards();
+      this.loadUsers();
     });
 
     // Listen for project updates
@@ -137,6 +143,17 @@ export class ProjectDetailComponent implements OnInit, OnDestroy {
     });
   }
 
+  loadUsers(): void {
+    this.usersService.getAll().subscribe({
+      next: (users) => {
+        this.allUsers.set(users);
+      },
+      error: (err) => {
+        console.error('Failed to load users:', err);
+      },
+    });
+  }
+
   filteredProjectBoards() {
     const term = this.searchTerm().toLowerCase();
     if (!term) return this.projectBoards();
@@ -150,7 +167,8 @@ export class ProjectDetailComponent implements OnInit, OnDestroy {
     this.showCreateDialog.set(true);
   }
 
-  confirmCreateBoard(name: string): void {
+  confirmCreateBoard(value: string | { name: string; isPublic: boolean }): void {
+    const name = typeof value === 'string' ? value : value.name;
     if (name && name.trim()) {
       this.isCreating.set(true);
       this.errorMessage.set('');
@@ -293,5 +311,100 @@ export class ProjectDetailComponent implements OnInit, OnDestroy {
     const board = this.activeBoard();
     if (!board) return '';
     return typeof board._id === 'string' ? board._id : String(board._id);
+  }
+
+  isProjectOwner(): boolean {
+    const project = this.project();
+    const currentUser = this.authService.user();
+    if (!project || !currentUser) return false;
+    const ownerId =
+      typeof project.ownerId === 'string'
+        ? project.ownerId
+        : (project.ownerId as any)._id?.toString() || (project.ownerId as any).id;
+    return ownerId === currentUser.id;
+  }
+
+  getProjectMembers(): User[] {
+    const project = this.project();
+    if (!project || !project.members) return [];
+    return project.members
+      .map((member) => {
+        if (typeof member === 'string') {
+          return this.allUsers().find((u) => u.id === member);
+        }
+        return {
+          id: (member as any)._id?.toString() || (member as any).id,
+          name: (member as any).name,
+          email: (member as any).email,
+        } as User;
+      })
+      .filter((u): u is User => u !== undefined);
+  }
+
+  getProjectOwner(): User | null {
+    const project = this.project();
+    if (!project || !project.ownerId) return null;
+    if (typeof project.ownerId === 'string') {
+      return this.allUsers().find((u) => u.id === project.ownerId) || null;
+    }
+    return {
+      id: (project.ownerId as any)._id?.toString() || (project.ownerId as any).id,
+      name: (project.ownerId as any).name,
+      email: (project.ownerId as any).email,
+    } as User;
+  }
+
+  addMember(): void {
+    this.showAddMemberDialog.set(true);
+  }
+
+  confirmAddMember(userId: string): void {
+    if (userId) {
+      this.projectsService.addMember(this.projectId(), userId).subscribe({
+        next: (project) => {
+          this.project.set(project);
+          this.showAddMemberDialog.set(false);
+        },
+        error: (err) => {
+          this.errorMessage.set(
+            err.error?.message || 'Failed to add member to project. Please try again.'
+          );
+          setTimeout(() => this.errorMessage.set(''), 5000);
+        },
+      });
+    }
+  }
+
+  cancelAddMember(): void {
+    this.showAddMemberDialog.set(false);
+  }
+
+  removeMember(userId: string): void {
+    if (confirm('Are you sure you want to remove this member from the project?')) {
+      this.projectsService.removeMember(this.projectId(), userId).subscribe({
+        next: (project) => {
+          this.project.set(project);
+        },
+        error: (err) => {
+          this.errorMessage.set(
+            err.error?.message || 'Failed to remove member from project. Please try again.'
+          );
+          setTimeout(() => this.errorMessage.set(''), 5000);
+        },
+      });
+    }
+  }
+
+  getAvailableUserOptions() {
+    const project = this.project();
+    if (!project) return [];
+    const memberIds = this.getProjectMembers().map((m) => m.id);
+    const ownerId = this.getProjectOwner()?.id;
+    return this.allUsers()
+      .filter((user) => user.id !== ownerId && !memberIds.includes(user.id))
+      .map((user) => ({
+        value: user.id,
+        label: `${user.name} (${user.email})`,
+      }));
   }
 }

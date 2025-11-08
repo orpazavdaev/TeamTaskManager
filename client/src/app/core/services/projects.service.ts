@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Project, CreateProjectDto, UpdateProjectDto } from '../models/project.model';
 import { environment } from '../../../environments/environment';
@@ -50,5 +50,21 @@ export class ProjectsService {
 
   updateAllColors(): Observable<any> {
     return this.http.post(`${this.API_URL}/update-colors`, {});
+  }
+
+  searchPublicProjects(searchTerm?: string): Observable<Project[]> {
+    let params = new HttpParams();
+    if (searchTerm) {
+      params = params.set('q', searchTerm);
+    }
+    return this.http.get<Project[]>(`${this.API_URL}/public/search`, { params });
+  }
+
+  addMember(projectId: string, userId: string): Observable<Project> {
+    return this.http.post<Project>(`${this.API_URL}/${projectId}/members`, { userId });
+  }
+
+  removeMember(projectId: string, userId: string): Observable<Project> {
+    return this.http.delete<Project>(`${this.API_URL}/${projectId}/members/${userId}`);
   }
 }

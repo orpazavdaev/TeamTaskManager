@@ -2,6 +2,7 @@ import {
   Injectable,
   NotFoundException,
   ForbiddenException,
+  BadRequestException,
   Inject,
   forwardRef,
 } from "@nestjs/common";
@@ -67,6 +68,43 @@ export class ProjectsService {
       .populate("activeBoardId", "name color");
   }
 
+  async searchPublicProjects(searchTerm?: string) {
+    const query: any = { isPublic: true };
+    if (searchTerm && searchTerm.trim()) {
+      // Escape special regex characters
+      const escapedTerm = searchTerm
+        .trim()
+        .replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+      query.$or = [
+        { name: { $regex: escapedTerm, $options: "i" } },
+        { description: { $regex: escapedTerm, $options: "i" } },
+      ];
+    }
+    const projects = await this.projectModel
+      .find(query)
+      .populate("ownerId", "name email")
+      .populate("boards", "name color")
+      .populate("activeBoardId", "name color")
+      .limit(50);
+    console.log(
+      "Search public projects - searchTerm:",
+      searchTerm,
+      "found:",
+      projects.length
+    );
+    projects.forEach((p) => {
+      console.log(
+        "  - Project:",
+        p.name,
+        "isPublic:",
+        p.isPublic,
+        "id:",
+        p._id
+      );
+    });
+    return projects;
+  }
+
   async findOne(id: string, userId: string) {
     const project = await this.projectModel
       .findOne({
@@ -109,6 +147,15 @@ export class ProjectsService {
       if (!board || board.projectId?.toString() !== id) {
         throw new ForbiddenException("The board must belong to this project");
       }
+
+      // Ensure only one board is active per project - clear activeBoardId from other projects
+      await this.projectModel.updateMany(
+        {
+          _id: { $ne: id },
+          activeBoardId: updateProjectDto.activeBoardId,
+        },
+        { $set: { activeBoardId: null } }
+      );
     }
 
     Object.assign(project, updateProjectDto);
@@ -232,5 +279,66 @@ export class ProjectsService {
       message: `Updated ${result.modifiedCount} projects to new color scheme`,
       modifiedCount: result.modifiedCount,
     };
+  }
+
+  async addMemberToProject(
+    projectId: string,
+    userId: string,
+    currentUserId: string
+  ) {
+    const project = await this.findOne(projectId, currentUserId);
+
+    // Only owner can add members
+    if (project.ownerId.toString() !== currentUserId) {
+      throw new ForbiddenException("Only the project owner can add members");
+    }
+
+    // Check if user is already a member
+    if (project.members.some((memberId) => memberId.toString() === userId)) {
+      throw new BadRequestException("User is already a member of this project");
+    }
+
+    // Check if user is the owner
+    if (project.ownerId.toString() === userId) {
+      throw new BadRequestException(
+        "User is already the owner of this project"
+      );
+    }
+
+    // Add user to members
+    project.members.push(userId as any);
+    await project.save();
+
+    const updatedProject = await this.findOne(projectId, currentUserId);
+    this.appGateway.broadcastProjectUpdate(updatedProject, "update");
+    return updatedProject;
+  }
+
+  async removeMemberFromProject(
+    projectId: string,
+    userId: string,
+    currentUserId: string
+  ) {
+    const project = await this.findOne(projectId, currentUserId);
+
+    // Only owner can remove members
+    if (project.ownerId.toString() !== currentUserId) {
+      throw new ForbiddenException("Only the project owner can remove members");
+    }
+
+    // Cannot remove owner
+    if (project.ownerId.toString() === userId) {
+      throw new BadRequestException("Cannot remove the project owner");
+    }
+
+    // Remove user from members
+    project.members = project.members.filter(
+      (memberId) => memberId.toString() !== userId
+    ) as any;
+    await project.save();
+
+    const updatedProject = await this.findOne(projectId, currentUserId);
+    this.appGateway.broadcastProjectUpdate(updatedProject, "update");
+    return updatedProject;
   }
 }

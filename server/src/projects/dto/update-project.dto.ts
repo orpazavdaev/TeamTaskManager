@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsArray } from "class-validator";
+import { IsString, IsOptional, IsArray, IsBoolean } from "class-validator";
 
 export class UpdateProjectDto {
   @IsString()
@@ -16,4 +16,8 @@ export class UpdateProjectDto {
   @IsString()
   @IsOptional()
   activeBoardId?: string;
+
+  @IsBoolean()
+  @IsOptional()
+  isPublic?: boolean;
 }

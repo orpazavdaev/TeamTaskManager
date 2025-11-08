@@ -4,7 +4,7 @@
     <div class="header-actions">
       <input
         type="text"
-        placeholder="Search projects..."
+        placeholder="Search my projects..."
         [value]="searchTerm()"
         (input)="searchTerm.set($any($event.target).value)"
         class="search-input"
@@ -20,10 +20,90 @@
     {{ errorMessage() }}
   </div>
 
+  <!-- Public Projects Search Section - Always visible at top -->
+  <section class="projects-section public-projects-section">
+    <h2 class="section-title">🌐 Search Public Projects</h2>
+    <div class="public-search-container">
+      <input
+        type="text"
+        placeholder="Search for public projects (or leave empty to see all)..."
+        [value]="publicSearchTerm()"
+        (input)="publicSearchTerm.set($any($event.target).value)"
+        (keyup.enter)="searchPublicProjects()"
+        class="search-input public-search-input"
+      />
+      <button
+        class="btn-secondary"
+        (click)="searchPublicProjects()"
+        [disabled]="isSearchingPublic()"
+      >
+        <span *ngIf="!isSearchingPublic()">Search</span>
+        <span *ngIf="isSearchingPublic()">Searching...</span>
+      </button>
+      <button
+        class="btn-secondary"
+        (click)="publicSearchTerm.set(''); searchPublicProjects()"
+        [disabled]="isSearchingPublic()"
+        title="Show all public projects"
+      >
+        Show All
+      </button>
+    </div>
+
+    <div *ngIf="filteredPublicProjects().length > 0" class="public-projects-results">
+      <h3 class="subsection-title">
+        Found {{ filteredPublicProjects().length }} public project(s)
+      </h3>
+      <div class="projects-grid">
+        <div
+          *ngFor="let project of filteredPublicProjects()"
+          class="project-card public-project-card"
+          (click)="navigateToProject(project._id)"
+          [style.border-color]="project.color || '#2A6F97'"
+        >
+          <div
+            class="project-header"
+            [style.background-color]="(project.color || '#2A6F97') + '15'"
+          >
+            <h3>{{ project.name }}</h3>
+            <span class="public-badge">Public</span>
+          </div>
+          <div class="project-content">
+            <p *ngIf="project.description">{{ project.description }}</p>
+            <div class="project-stats">
+              <span class="stat">
+                <strong>{{ (project.boards || []).length }}</strong> Boards
+              </span>
+              <span class="stat" *ngIf="project.activeBoardId">
+                <strong>1</strong> Active Sprint
+              </span>
+            </div>
+            <p class="project-meta">Owner: {{ getOwnerName(project) }}</p>
+            <p class="project-meta">Created {{ project.createdAt | date : 'short' }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div
+      *ngIf="
+        !isSearchingPublic() &&
+        filteredPublicProjects().length === 0 &&
+        (publicSearchTerm() || publicProjects().length > 0)
+      "
+      class="empty-state"
+    >
+      <p *ngIf="publicSearchTerm()">
+        No public projects found matching "{{ publicSearchTerm() }}".
+      </p>
+      <p *ngIf="!publicSearchTerm()">No public projects available.</p>
+    </div>
+  </section>
+
   <div *ngIf="!isLoading(); else loading">
     <!-- My Projects Section -->
     <section class="projects-section" *ngIf="filteredMyProjects().length > 0">
-      <h2 class="section-title">My Projects</h2>
+      <h2 class="section-title">📁 My Projects (Created by Me)</h2>
       <div class="projects-grid">
         <div
           *ngFor="let project of filteredMyProjects()"
@@ -56,7 +136,7 @@
 
     <!-- Shared Projects Section -->
     <section class="projects-section" *ngIf="filteredSharedProjects().length > 0">
-      <h2 class="section-title">Shared Projects</h2>
+      <h2 class="section-title">👥 Shared Projects (With Permissions)</h2>
       <div class="projects-grid">
         <div
           *ngFor="let project of filteredSharedProjects()"
@@ -89,7 +169,11 @@
 
     <!-- Empty State -->
     <div
-      *ngIf="filteredMyProjects().length === 0 && filteredSharedProjects().length === 0"
+      *ngIf="
+        filteredMyProjects().length === 0 &&
+        filteredSharedProjects().length === 0 &&
+        !publicSearchTerm()
+      "
       class="empty-state"
     >
       <p>No projects found. Create your first project!</p>
@@ -108,6 +192,7 @@
   placeholder="Enter project name"
   confirmText="Create"
   cancelText="Cancel"
+  [showPublicOption]="true"
   (confirm)="confirmCreateProject($event)"
   (cancel)="cancelCreateProject()"
 ></app-input-dialog>

@@ -1,6 +1,6 @@
-import { Component, OnInit, signal, computed } from '@angular/core';
+import { Component, OnInit, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 import { TasksService } from '../../core/services/tasks.service';
 import { AuthService } from '../../core/services/auth.service';
 import { Task, TaskStatus } from '../../core/models/task.model';
@@ -28,6 +28,8 @@ export class ProfileComponent implements OnInit {
   doneTasks = computed(() => this.tasks().filter((task) => task.status === TaskStatus.DONE));
 
   user = computed(() => this.authService.user());
+
+  private router = inject(Router);
 
   constructor(private tasksService: TasksService, private authService: AuthService) {}
 
@@ -98,7 +100,7 @@ export class ProfileComponent implements OnInit {
   navigateToBoard(boardId: string | any): void {
     const id = typeof boardId === 'string' ? boardId : boardId?._id || boardId;
     if (id) {
-      window.location.href = `/boards/${id}`;
+      this.router.navigate(['/boards', id]);
     }
   }
 

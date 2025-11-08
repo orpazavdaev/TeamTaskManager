@@ -22,11 +22,14 @@ export class ProjectsListComponent implements OnInit {
 
   myProjects = signal<Project[]>([]);
   sharedProjects = signal<Project[]>([]);
+  publicProjects = signal<Project[]>([]);
   isLoading = signal(true);
   searchTerm = signal('');
+  publicSearchTerm = signal('');
   isCreating = signal(false);
   errorMessage = signal('');
   showCreateDialog = signal(false);
+  isSearchingPublic = signal(false);
 
   ngOnInit(): void {
     const token = this.authService.getToken();
@@ -42,6 +45,8 @@ export class ProjectsListComponent implements OnInit {
       });
       this.loadProjects();
       this.wsService.connect();
+      // Load all public projects automatically
+      this.loadAllPublicProjects();
     } else {
       setTimeout(() => {
         const tokenAfterWait = this.authService.getToken();
@@ -57,8 +62,12 @@ export class ProjectsListComponent implements OnInit {
           });
           this.loadProjects();
           this.wsService.connect();
+          // Load all public projects automatically
+          this.loadAllPublicProjects();
         } else {
           this.loadProjects();
+          // Load all public projects automatically even without token
+          this.loadAllPublicProjects();
         }
       }, 300);
     }
@@ -150,17 +159,136 @@ export class ProjectsListComponent implements OnInit {
     );
   }
 
+  loadAllPublicProjects(): void {
+    // Load all public projects automatically on page load
+    this.publicSearchTerm.set('');
+    this.searchPublicProjects();
+  }
+
+  searchPublicProjects(): void {
+    const term = this.publicSearchTerm().trim();
+    // Allow empty search to show all public projects
+    this.isSearchingPublic.set(true);
+    console.log('Searching for public projects with term:', term);
+    this.projectsService.searchPublicProjects(term || undefined).subscribe({
+      next: (projects) => {
+        console.log('Public projects found:', projects.length, projects);
+        // Filter out projects that the user already has access to
+        const currentUser = this.authService.user();
+        if (!currentUser) {
+          this.publicProjects.set(projects);
+          this.isSearchingPublic.set(false);
+          return;
+        }
+
+        console.log('Current user:', currentUser.id);
+        console.log(
+          'My projects:',
+          this.myProjects().map((p) => p._id)
+        );
+        console.log(
+          'Shared projects:',
+          this.sharedProjects().map((p) => p._id)
+        );
+
+        const myProjectIds = new Set([
+          ...this.myProjects().map((p) => p._id),
+          ...this.sharedProjects().map((p) => p._id),
+        ]);
+
+        const filteredProjects = projects.filter((project) => {
+          // Exclude projects the user already owns or is a member of
+          const ownerId =
+            typeof project.ownerId === 'string'
+              ? project.ownerId
+              : (project.ownerId as any)?._id?.toString() || (project.ownerId as any)?.id;
+
+          console.log(
+            'Checking project:',
+            project.name,
+            'ownerId:',
+            ownerId,
+            'currentUser.id:',
+            currentUser.id
+          );
+          console.log('  ownerId === currentUser.id?', ownerId === currentUser.id);
+          console.log(
+            '  ownerId type:',
+            typeof ownerId,
+            'currentUser.id type:',
+            typeof currentUser.id
+          );
+
+          // Use String() to ensure proper comparison
+          if (String(ownerId) === String(currentUser.id)) {
+            console.log('Excluding project (owner):', project.name, project._id);
+            return false;
+          }
+
+          const memberIds = (project.members || []).map((m: any) => {
+            return typeof m === 'string' ? String(m) : String(m._id || m.id);
+          });
+          console.log(
+            '  memberIds:',
+            memberIds,
+            'includes?',
+            memberIds.includes(String(currentUser.id))
+          );
+          if (memberIds.includes(String(currentUser.id))) {
+            console.log('Excluding project (member):', project.name, project._id);
+            return false;
+          }
+
+          // Exclude projects already in myProjects or sharedProjects
+          const projectIdStr = String(project._id);
+          const myProjectIdsStr = new Set(Array.from(myProjectIds).map((id) => String(id)));
+          if (myProjectIdsStr.has(projectIdStr)) {
+            console.log('Excluding project (already in list):', project.name, project._id);
+            return false;
+          }
+
+          console.log(
+            'Including project:',
+            project.name,
+            project._id,
+            'isPublic:',
+            project.isPublic
+          );
+          return true;
+        });
+
+        console.log('Filtered public projects:', filteredProjects.length, filteredProjects);
+        this.publicProjects.set(filteredProjects);
+        this.isSearchingPublic.set(false);
+      },
+      error: (err) => {
+        console.error('Failed to search public projects:', err);
+        this.isSearchingPublic.set(false);
+        this.publicProjects.set([]);
+      },
+    });
+  }
+
+  filteredPublicProjects() {
+    return this.publicProjects();
+  }
+
   createProject(): void {
     this.showCreateDialog.set(true);
   }
 
-  confirmCreateProject(name: string): void {
-    if (name && name.trim()) {
+  confirmCreateProject(data: string | { name: string; isPublic: boolean }): void {
+    const projectData =
+      typeof data === 'string'
+        ? { name: data.trim(), isPublic: false }
+        : { name: data.name.trim(), isPublic: data.isPublic };
+
+    if (projectData.name) {
       this.isCreating.set(true);
       this.errorMessage.set('');
       this.showCreateDialog.set(false);
 
-      this.projectsService.create({ name: name.trim() }).subscribe({
+      this.projectsService.create(projectData).subscribe({
         next: (project) => {
           this.isCreating.set(false);
           // Don't add here - WebSocket will handle it to avoid duplicates
@@ -184,5 +312,12 @@ export class ProjectsListComponent implements OnInit {
 
   navigateToProject(projectId: string): void {
     this.router.navigate(['/projects', projectId]);
+  }
+
+  getOwnerName(project: Project): string {
+    if (typeof project.ownerId === 'string') {
+      return 'Unknown';
+    }
+    return (project.ownerId as any)?.name || 'Unknown';
   }
 }

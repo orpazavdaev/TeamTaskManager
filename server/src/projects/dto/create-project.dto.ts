@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsArray } from "class-validator";
+import { IsString, IsOptional, IsArray, IsBoolean } from "class-validator";
 
 export class CreateProjectDto {
   @IsString()
@@ -11,4 +11,8 @@ export class CreateProjectDto {
   @IsArray()
   @IsOptional()
   members?: string[];
+
+  @IsBoolean()
+  @IsOptional()
+  isPublic?: boolean;
 }

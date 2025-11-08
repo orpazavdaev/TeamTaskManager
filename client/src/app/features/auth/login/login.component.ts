@@ -1,7 +1,7 @@
-import { Component, inject } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
@@ -11,9 +11,10 @@ import { AuthService } from '../../../core/services/auth.service';
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   private authService = inject(AuthService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
   private fb = inject(FormBuilder);
 
   loginForm: FormGroup = this.fb.group({
@@ -23,6 +24,18 @@ export class LoginComponent {
 
   errorMessage = '';
   isLoading = false;
+  returnUrl: string = '/projects';
+
+  ngOnInit(): void {
+    // Get returnUrl from query params, default to /projects
+    this.route.queryParams.subscribe((params) => {
+      this.returnUrl = params['returnUrl'] || '/projects';
+      // Make sure returnUrl doesn't point to /boards
+      if (this.returnUrl.startsWith('/boards')) {
+        this.returnUrl = '/projects';
+      }
+    });
+  }
 
   onSubmit(): void {
     if (this.loginForm.valid) {
@@ -32,7 +45,7 @@ export class LoginComponent {
       this.authService.login(this.loginForm.value).subscribe({
         next: () => {
           this.isLoading = false;
-          this.router.navigate(['/boards']);
+          this.router.navigate([this.returnUrl]);
         },
         error: (err) => {
           this.isLoading = false;

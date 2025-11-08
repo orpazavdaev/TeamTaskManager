@@ -25,6 +25,9 @@ export class Project {
 
   @Prop({ default: "#2A6F97" })
   color: string;
+
+  @Prop({ default: false })
+  isPublic: boolean;
 }
 
 export const ProjectSchema = SchemaFactory.createForClass(Project);

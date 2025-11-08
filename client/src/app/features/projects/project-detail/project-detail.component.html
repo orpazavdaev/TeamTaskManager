@@ -10,7 +10,42 @@
         <span *ngIf="isCreating()">Creating...</span>
       </button>
       <button class="btn-secondary" (click)="addExistingBoard()">+ Add Existing Board</button>
+      <button
+        *ngIf="isProjectOwner()"
+        class="btn-secondary"
+        (click)="addMember()"
+        title="Add Member to Project"
+      >
+        + Add Member
+      </button>
       <a routerLink="/projects" class="btn-secondary">← Back to Projects</a>
+    </div>
+  </div>
+
+  <div class="members-section" *ngIf="isProjectOwner() || getProjectMembers().length > 0">
+    <h2 class="section-title">Project Members</h2>
+    <div class="members-list">
+      <div class="member-item owner">
+        <div class="member-info">
+          <span class="member-name">{{ getProjectOwner()?.name }}</span>
+          <span class="member-email">{{ getProjectOwner()?.email }}</span>
+        </div>
+        <span class="member-role">Owner</span>
+      </div>
+      <div class="member-item" *ngFor="let member of getProjectMembers()">
+        <div class="member-info">
+          <span class="member-name">{{ member.name }}</span>
+          <span class="member-email">{{ member.email }}</span>
+        </div>
+        <button
+          *ngIf="isProjectOwner()"
+          class="btn-icon"
+          (click)="removeMember(member.id)"
+          title="Remove Member"
+        >
+          🗑️
+        </button>
+      </div>
     </div>
   </div>
 
@@ -113,4 +148,15 @@
   cancelText="Cancel"
   (confirm)="confirmAddBoard($event)"
   (cancel)="cancelAddBoard()"
+></app-select-dialog>
+
+<app-select-dialog
+  *ngIf="showAddMemberDialog()"
+  title="Add Member to Project"
+  label="Select User"
+  [options]="getAvailableUserOptions()"
+  confirmText="Add"
+  cancelText="Cancel"
+  (confirm)="confirmAddMember($event)"
+  (cancel)="cancelAddMember()"
 ></app-select-dialog>

@@ -39,6 +39,12 @@ export class ProjectsController {
     return this.projectsService.findSharedProjects(req.user.userId);
   }
 
+  @Get("public/search")
+  searchPublicProjects(@Request() req) {
+    const searchTerm = (req.query as any)?.q || "";
+    return this.projectsService.searchPublicProjects(searchTerm);
+  }
+
   @Get(":id")
   findOne(@Param("id") id: string, @Request() req) {
     return this.projectsService.findOne(id, req.user.userId);
@@ -87,5 +93,31 @@ export class ProjectsController {
   @Post("update-colors")
   updateAllProjectColors() {
     return this.projectsService.updateAllProjectColors();
+  }
+
+  @Post(":id/members")
+  addMemberToProject(
+    @Param("id") projectId: string,
+    @Body() body: { userId: string },
+    @Request() req
+  ) {
+    return this.projectsService.addMemberToProject(
+      projectId,
+      body.userId,
+      req.user.userId
+    );
+  }
+
+  @Delete(":id/members/:userId")
+  removeMemberFromProject(
+    @Param("id") projectId: string,
+    @Param("userId") userId: string,
+    @Request() req
+  ) {
+    return this.projectsService.removeMemberFromProject(
+      projectId,
+      userId,
+      req.user.userId
+    );
   }
 }

@@ -93,6 +93,64 @@
   margin-bottom: 40px;
 }
 
+.members-section {
+  margin-bottom: 40px;
+}
+
+.members-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.member-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 20px;
+  background: var(--card-bg);
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  transition: all 0.2s;
+}
+
+.member-item:hover {
+  border-color: var(--primary-color);
+  box-shadow: var(--shadow-sm);
+}
+
+.member-item.owner {
+  background: var(--primary-light);
+  border-color: var(--primary-color);
+}
+
+.member-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.member-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.member-email {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.member-role {
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--primary-color);
+  padding: 4px 12px;
+  background: var(--primary-light);
+  border-radius: 12px;
+}
+
 .section-title {
   font-size: 20px;
   font-weight: 600;

@@ -16,7 +16,8 @@ export class InputDialogComponent implements OnInit {
   @Input() initialValue: string = '';
   @Input() confirmText: string = 'Confirm';
   @Input() cancelText: string = 'Cancel';
-  @Output() confirm = new EventEmitter<string>();
+  @Input() showPublicOption: boolean = false;
+  @Output() confirm = new EventEmitter<string | { name: string; isPublic: boolean }>();
   @Output() cancel = new EventEmitter<void>();
 
   private fb = inject(FormBuilder);
@@ -25,6 +26,7 @@ export class InputDialogComponent implements OnInit {
   constructor() {
     this.form = this.fb.group({
       value: ['', [Validators.required]],
+      isPublic: [false],
     });
   }
 
@@ -36,7 +38,14 @@ export class InputDialogComponent implements OnInit {
 
   onSubmit(): void {
     if (this.form.valid) {
-      this.confirm.emit(this.form.value.value);
+      if (this.showPublicOption) {
+        this.confirm.emit({
+          name: this.form.value.value,
+          isPublic: this.form.value.isPublic,
+        });
+      } else {
+        this.confirm.emit(this.form.value.value);
+      }
     }
   }
 
@@ -44,4 +53,3 @@ export class InputDialogComponent implements OnInit {
     this.cancel.emit();
   }
 }
-

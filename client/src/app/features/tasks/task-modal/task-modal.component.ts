@@ -2,7 +2,8 @@ import { Component, Input, Output, EventEmitter, OnInit, inject, signal } from '
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { TasksService } from '../../../core/services/tasks.service';
-import { UsersService, User } from '../../../core/services/users.service';
+import { UsersService } from '../../../core/services/users.service';
+import { User } from '../../../core/models/user.model';
 import { Task, TaskStatus, TaskPriority, CreateTaskDto } from '../../../core/models/task.model';
 
 @Component({
@@ -155,7 +156,7 @@ export class TaskModalComponent implements OnInit {
   getUserInitials(user: User): string {
     return user.name
       .split(' ')
-      .map((n) => n[0])
+      .map((n: string) => n[0])
       .join('')
       .toUpperCase()
       .substring(0, 2);
