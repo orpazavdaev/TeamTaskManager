@@ -25,13 +25,10 @@ import {
   startOfWeek,
   endOfWeek,
 } from 'date-fns';
-import { InputDialogComponent } from '../../shared/components/input-dialog/input-dialog.component';
-import { SelectDialogComponent } from '../../shared/components/select-dialog/select-dialog.component';
-
 @Component({
   selector: 'app-calendar',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, InputDialogComponent, SelectDialogComponent],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './calendar.component.html',
   styleUrl: './calendar.component.css',
 })
