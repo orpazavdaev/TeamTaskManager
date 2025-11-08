@@ -29,9 +29,9 @@
           *ngFor="let board of filteredMyBoards()"
           class="board-card"
           [routerLink]="['/boards', board._id]"
-          [style.border-color]="board.color || '#d782ba'"
+          [style.border-color]="board.color || '#CDB4DB'"
         >
-          <div class="board-header" [style.background-color]="(board.color || '#d782ba') + '15'">
+          <div class="board-header" [style.background-color]="(board.color || '#CDB4DB') + '15'">
             <h3>{{ board.name }}</h3>
           </div>
           <div class="board-content">
@@ -50,9 +50,9 @@
           *ngFor="let board of filteredSharedBoards()"
           class="board-card"
           [routerLink]="['/boards', board._id]"
-          [style.border-color]="board.color || '#d782ba'"
+          [style.border-color]="board.color || '#CDB4DB'"
         >
-          <div class="board-header" [style.background-color]="(board.color || '#d782ba') + '15'">
+          <div class="board-header" [style.background-color]="(board.color || '#CDB4DB') + '15'">
             <h3>{{ board.name }}</h3>
           </div>
           <div class="board-content">

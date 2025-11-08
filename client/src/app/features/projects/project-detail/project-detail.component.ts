@@ -285,8 +285,8 @@ export class ProjectDetailComponent implements OnInit, OnDestroy {
 
   getActiveBoardColor(): string {
     const board = this.activeBoard();
-    if (!board) return '#d782ba';
-    return (board as any)?.color || '#d782ba';
+    if (!board) return '#CDB4DB';
+    return (board as any)?.color || '#CDB4DB';
   }
 
   getActiveBoardId(): string {

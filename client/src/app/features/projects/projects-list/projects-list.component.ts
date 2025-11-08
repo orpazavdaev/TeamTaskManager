@@ -1,6 +1,6 @@
 import { Component, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { ProjectsService } from '../../../core/services/projects.service';
 import { Project } from '../../../core/models/project.model';
 import { WebSocketService } from '../../../core/services/websocket.service';
@@ -10,7 +10,7 @@ import { InputDialogComponent } from '../../../shared/components/input-dialog/in
 @Component({
   selector: 'app-projects-list',
   standalone: true,
-  imports: [CommonModule, RouterLink, InputDialogComponent],
+  imports: [CommonModule, InputDialogComponent],
   templateUrl: './projects-list.component.html',
   styleUrl: './projects-list.component.css',
 })

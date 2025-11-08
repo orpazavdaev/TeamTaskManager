@@ -23,7 +23,7 @@
     <div class="active-board-card" (click)="navigateToBoard(getActiveBoardId())">
       <div
         class="board-header"
-        [style.background-color]="(getActiveBoardColor() || '#d782ba') + '15'"
+        [style.background-color]="(getActiveBoardColor() || '#CDB4DB') + '15'"
       >
         <h3>{{ getActiveBoardName() }}</h3>
         <span class="active-badge">ACTIVE</span>
@@ -52,9 +52,9 @@
         *ngFor="let board of filteredProjectBoards()"
         class="board-card"
         [routerLink]="['/projects', projectId(), 'boards', board._id]"
-        [style.border-color]="board.color || '#d782ba'"
+        [style.border-color]="board.color || '#CDB4DB'"
       >
-        <div class="board-header" [style.background-color]="(board.color || '#d782ba') + '15'">
+        <div class="board-header" [style.background-color]="(board.color || '#CDB4DB') + '15'">
           <h3>{{ board.name }}</h3>
           <div class="board-actions">
             <button

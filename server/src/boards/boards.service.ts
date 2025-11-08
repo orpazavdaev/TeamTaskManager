@@ -146,10 +146,22 @@ export class BoardsService {
   }
 
   async updateAllBoardColors() {
-    // Update all boards with old blue color to new pastel color
+    // Update all boards with old colors to new pastel color
     const result = await this.boardModel.updateMany(
-      { color: { $in: ["#4285F4", "#0052cc", "#0065ff", "#667eea"] } },
-      { $set: { color: "#d782ba" } }
+      {
+        color: {
+          $in: [
+            "#4285F4",
+            "#0052cc",
+            "#0065ff",
+            "#667eea",
+            "#d782ba",
+            "#e18ad4",
+            "#eeb1d5",
+          ],
+        },
+      },
+      { $set: { color: "#CDB4DB" } }
     );
     return {
       message: `Updated ${result.modifiedCount} boards to new color scheme`,

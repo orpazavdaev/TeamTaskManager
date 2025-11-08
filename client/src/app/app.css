@@ -1,19 +1,19 @@
 :root {
-  --primary-color: #d782ba; /* Sky magenta */
-  --primary-hover: #e18ad4; /* Violet */
-  --bg-color: #fef7ff; /* Very light pink/white background */
+  --primary-color: #cdb4db; /* Purple bright */
+  --primary-hover: #ffc8dd; /* Pink bright */
+  --bg-color: #f0f8ff; /* Very light blue/white background */
   --card-bg: #ffffff;
   --text-color: #2d3748;
   --text-secondary: #718096;
-  --border-color: #eeb1d5; /* Lavender pink border */
+  --border-color: #a2d2ff; /* Blue medium border */
 }
 
 .dark-mode {
   --bg-color: #1a1f2e;
   --card-bg: #252a3a;
-  --text-color: #eeb1d5; /* Lavender pink text */
-  --text-secondary: #efc7e5; /* Thistle secondary */
-  --border-color: #d782ba; /* Sky magenta border */
+  --text-color: #ffc8dd; /* Pink bright text */
+  --text-secondary: #bde0fe; /* Blue bright secondary */
+  --border-color: #cdb4db; /* Purple bright border */
 }
 
 * {

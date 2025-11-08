@@ -40,7 +40,7 @@ export class LoginComponent {
           // Better error messages
           if (err.status === 0) {
             this.errorMessage =
-              'Cannot connect to server. Please check if the backend is running on http://localhost:3000';
+              'Cannot connect to server. Please check if the backend is running on http://localhost:3001';
           } else if (err.status === 401) {
             this.errorMessage =
               err.error?.message || 'Invalid email or password. Please try again.';

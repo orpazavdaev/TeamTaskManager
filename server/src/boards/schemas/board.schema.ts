@@ -17,7 +17,7 @@ export class Board {
   @Prop({ type: [MongooseSchema.Types.ObjectId], default: [] })
   members: MongooseSchema.Types.ObjectId[];
 
-  @Prop({ default: "#d782ba" })
+  @Prop({ default: "#CDB4DB" })
   color: string;
 
   @Prop({ ref: "Project", default: null })

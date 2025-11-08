@@ -1,38 +1,39 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 :root {
-  /* Pastel Color Palette - No Green! */
-  --primary-color: #d782ba; /* Sky magenta */
-  --primary-hover: #e18ad4; /* Violet */
-  --primary-light: #eeb1d5; /* Lavender pink */
-  --primary-lighter: #efc7e5; /* Thistle */
+  /* New Pastel Color Palette */
+  --primary-color: #cdb4db; /* Purple bright */
+  --primary-hover: #ffc8dd; /* Pink bright */
+  --primary-light: #ffafcc; /* Pink medium */
+  --primary-lighter: #bde0fe; /* Blue bright */
+  --primary-lightest: #a2d2ff; /* Blue medium */
 
-  --bg-color: #fef7ff; /* Very light pink/white background */
+  --bg-color: #f0f8ff; /* Very light blue/white background */
   --card-bg: #ffffff;
   --text-color: #2d3748;
   --text-secondary: #718096;
-  --border-color: #eeb1d5; /* Lavender pink border */
-  --shadow-sm: 0 1px 3px rgba(215, 130, 186, 0.12);
-  --shadow-md: 0 4px 6px rgba(215, 130, 186, 0.15);
-  --shadow-lg: 0 10px 15px rgba(215, 130, 186, 0.2);
-  --shadow-xl: 0 20px 25px rgba(215, 130, 186, 0.25);
-  --todo-color: #d782ba; /* Sky magenta */
-  --in-progress-color: #e18ad4; /* Violet */
-  --done-color: #eeb1d5; /* Lavender pink */
-  --hover-bg: #efc7e5; /* Thistle */
+  --border-color: #a2d2ff; /* Blue medium border */
+  --shadow-sm: 0 1px 3px rgba(205, 180, 219, 0.12);
+  --shadow-md: 0 4px 6px rgba(205, 180, 219, 0.15);
+  --shadow-lg: 0 10px 15px rgba(205, 180, 219, 0.2);
+  --shadow-xl: 0 20px 25px rgba(205, 180, 219, 0.25);
+  --todo-color: #cdb4db; /* Purple bright */
+  --in-progress-color: #ffc8dd; /* Pink bright */
+  --done-color: #ffafcc; /* Pink medium */
+  --hover-bg: #bde0fe; /* Blue bright */
 }
 
 .dark-mode {
   /* Dark mode with pastel accents */
   --bg-color: #1a1f2e;
   --card-bg: #252a3a;
-  --text-color: #eeb1d5; /* Lavender pink text */
-  --text-secondary: #efc7e5; /* Thistle secondary */
-  --border-color: #d782ba; /* Sky magenta border */
-  --shadow-sm: 0 1px 3px rgba(215, 130, 186, 0.3);
-  --shadow-md: 0 4px 6px rgba(215, 130, 186, 0.4);
-  --shadow-lg: 0 10px 15px rgba(215, 130, 186, 0.5);
-  --shadow-xl: 0 20px 25px rgba(215, 130, 186, 0.6);
+  --text-color: #ffc8dd; /* Pink bright text */
+  --text-secondary: #bde0fe; /* Blue bright secondary */
+  --border-color: #cdb4db; /* Purple bright border */
+  --shadow-sm: 0 1px 3px rgba(205, 180, 219, 0.3);
+  --shadow-md: 0 4px 6px rgba(205, 180, 219, 0.4);
+  --shadow-lg: 0 10px 15px rgba(205, 180, 219, 0.5);
+  --shadow-xl: 0 20px 25px rgba(205, 180, 219, 0.6);
   --hover-bg: #2d3444;
 }
 

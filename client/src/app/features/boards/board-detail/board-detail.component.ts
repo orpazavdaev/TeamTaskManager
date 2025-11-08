@@ -271,22 +271,22 @@ export class BoardDetailComponent implements OnInit, OnDestroy {
   // Generate a random color for each task border based on task ID
   getTaskBorderColor(taskId: string): string {
     const colors = [
-      '#d782ba' /* Sky magenta */,
-      '#e18ad4' /* Violet */,
-      '#eeb1d5' /* Lavender pink */,
-      '#efc7e5' /* Thistle */,
-      '#a8d5ba' /* Mint */,
-      '#b8e6d3' /* Light mint */,
-      '#c4e1d4' /* Pale mint */,
-      '#d4f1e4' /* Very light mint */,
-      '#f4c2c2' /* Light pink */,
-      '#f9d5d5' /* Very light pink */,
-      '#e8d4c4' /* Beige */,
-      '#f0e6d4' /* Light beige */,
-      '#d4c4e8' /* Lavender */,
-      '#e4d4f0' /* Light lavender */,
-      '#c4d4e8' /* Light blue */,
-      '#d4e4f0' /* Very light blue */,
+      '#CDB4DB' /* Purple bright */,
+      '#FFC8DD' /* Pink bright */,
+      '#FFAFCC' /* Pink medium */,
+      '#BDE0FE' /* Blue bright */,
+      '#A2D2FF' /* Blue medium */,
+      '#E8D4F0' /* Light purple */,
+      '#F0D4E8' /* Light pink-purple */,
+      '#D4E8F0' /* Light blue-purple */,
+      '#E8F0D4' /* Light green-blue */,
+      '#F0E8D4' /* Light beige */,
+      '#D4F0E8' /* Light blue-green */,
+      '#F0D4E0' /* Light pink */,
+      '#E0D4F0' /* Light purple-blue */,
+      '#D4F0E0' /* Light green */,
+      '#F0E0D4' /* Light peach */,
+      '#E0F0D4' /* Light yellow-green */,
     ];
     // Use task ID to generate a consistent color for each task
     const hash = taskId.split('').reduce((acc, char) => {
