@@ -29,11 +29,11 @@
           *ngFor="let project of filteredMyProjects()"
           class="project-card"
           (click)="navigateToProject(project._id)"
-          [style.border-color]="project.color || '#CDB4DB'"
+          [style.border-color]="project.color || '#2A6F97'"
         >
           <div
             class="project-header"
-            [style.background-color]="(project.color || '#CDB4DB') + '15'"
+            [style.background-color]="(project.color || '#2A6F97') + '15'"
           >
             <h3>{{ project.name }}</h3>
             <span class="active-sprint" *ngIf="project.activeBoardId"> Active Sprint </span>
@@ -42,7 +42,7 @@
             <p *ngIf="project.description">{{ project.description }}</p>
             <div class="project-stats">
               <span class="stat">
-                <strong>{{ project.boards?.length ?? 0 }}</strong> Boards
+                <strong>{{ (project.boards || []).length }}</strong> Boards
               </span>
               <span class="stat" *ngIf="project.activeBoardId">
                 <strong>1</strong> Active Sprint
@@ -62,11 +62,11 @@
           *ngFor="let project of filteredSharedProjects()"
           class="project-card"
           (click)="navigateToProject(project._id)"
-          [style.border-color]="project.color || '#CDB4DB'"
+          [style.border-color]="project.color || '#2A6F97'"
         >
           <div
             class="project-header"
-            [style.background-color]="(project.color || '#CDB4DB') + '15'"
+            [style.background-color]="(project.color || '#2A6F97') + '15'"
           >
             <h3>{{ project.name }}</h3>
             <span class="active-sprint" *ngIf="project.activeBoardId"> Active Sprint </span>
@@ -75,7 +75,7 @@
             <p *ngIf="project.description">{{ project.description }}</p>
             <div class="project-stats">
               <span class="stat">
-                <strong>{{ project.boards?.length ?? 0 }}</strong> Boards
+                <strong>{{ (project.boards || []).length }}</strong> Boards
               </span>
               <span class="stat" *ngIf="project.activeBoardId">
                 <strong>1</strong> Active Sprint

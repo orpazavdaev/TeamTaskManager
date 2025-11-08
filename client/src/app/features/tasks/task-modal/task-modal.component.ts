@@ -162,17 +162,17 @@ export class TaskModalComponent implements OnInit {
   }
 
   getUserAvatarColor(user: User): string {
-    // Generate a consistent color based on user name using pastel palette
-      const colors = [
-        '#D782BA' /* Sky magenta */,
-        '#E18AD4' /* Violet */,
-        '#EEB1D5' /* Lavender pink */,
-        '#EFC7E5' /* Thistle */,
-        '#D782BA' /* Sky magenta (repeat for more users) */,
-        '#E18AD4' /* Violet (repeat) */,
-        '#EEB1D5' /* Lavender pink (repeat) */,
-        '#EFC7E5' /* Thistle (repeat) */,
-      ];
+    // Generate a consistent color based on user name using blue palette
+    const colors = [
+      '#2A6F97' /* Medium blue with teal hint */,
+      '#2C7DA0' /* Medium teal-blue */,
+      '#468FAF' /* Light muted blue */,
+      '#61A5C2' /* Light sky blue */,
+      '#89C2D9' /* Very light blue */,
+      '#A9D6E5' /* Pale almost white blue */,
+      '#01497C' /* Medium-dark blue */,
+      '#014F86' /* Slightly lighter medium-dark blue */,
+    ];
     const index = user.name.charCodeAt(0) % colors.length;
     return colors[index];
   }

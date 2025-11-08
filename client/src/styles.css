@@ -1,40 +1,40 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
 :root {
-  /* New Pastel Color Palette */
-  --primary-color: #cdb4db; /* Purple bright */
-  --primary-hover: #ffc8dd; /* Pink bright */
-  --primary-light: #ffafcc; /* Pink medium */
-  --primary-lighter: #bde0fe; /* Blue bright */
-  --primary-lightest: #a2d2ff; /* Blue medium */
+  /* Blue Color Palette */
+  --primary-color: #2a6f97; /* Medium blue with teal hint */
+  --primary-hover: #468faf; /* Light muted blue */
+  --primary-light: #61a5c2; /* Light sky blue */
+  --primary-lighter: #89c2d9; /* Very light blue */
+  --primary-lightest: #a9d6e5; /* Pale almost white blue */
 
   --bg-color: #f0f8ff; /* Very light blue/white background */
   --card-bg: #ffffff;
-  --text-color: #2d3748;
-  --text-secondary: #718096;
-  --border-color: #a2d2ff; /* Blue medium border */
-  --shadow-sm: 0 1px 3px rgba(205, 180, 219, 0.12);
-  --shadow-md: 0 4px 6px rgba(205, 180, 219, 0.15);
-  --shadow-lg: 0 10px 15px rgba(205, 180, 219, 0.2);
-  --shadow-xl: 0 20px 25px rgba(205, 180, 219, 0.25);
-  --todo-color: #cdb4db; /* Purple bright */
-  --in-progress-color: #ffc8dd; /* Pink bright */
-  --done-color: #ffafcc; /* Pink medium */
-  --hover-bg: #bde0fe; /* Blue bright */
+  --text-color: #012a4a; /* Dark navy blue */
+  --text-secondary: #01497c; /* Medium-dark blue */
+  --border-color: #61a5c2; /* Light sky blue border */
+  --shadow-sm: 0 1px 3px rgba(42, 111, 151, 0.12);
+  --shadow-md: 0 4px 6px rgba(42, 111, 151, 0.15);
+  --shadow-lg: 0 10px 15px rgba(42, 111, 151, 0.2);
+  --shadow-xl: 0 20px 25px rgba(42, 111, 151, 0.25);
+  --todo-color: #01497c; /* Medium-dark blue */
+  --in-progress-color: #2a6f97; /* Medium blue */
+  --done-color: #61a5c2; /* Light sky blue */
+  --hover-bg: #89c2d9; /* Very light blue */
 }
 
 .dark-mode {
-  /* Dark mode with pastel accents */
-  --bg-color: #1a1f2e;
-  --card-bg: #252a3a;
-  --text-color: #ffc8dd; /* Pink bright text */
-  --text-secondary: #bde0fe; /* Blue bright secondary */
-  --border-color: #cdb4db; /* Purple bright border */
-  --shadow-sm: 0 1px 3px rgba(205, 180, 219, 0.3);
-  --shadow-md: 0 4px 6px rgba(205, 180, 219, 0.4);
-  --shadow-lg: 0 10px 15px rgba(205, 180, 219, 0.5);
-  --shadow-xl: 0 20px 25px rgba(205, 180, 219, 0.6);
-  --hover-bg: #2d3444;
+  /* Dark mode with blue accents */
+  --bg-color: #012a4a; /* Dark navy blue */
+  --card-bg: #013a63; /* Dark blue */
+  --text-color: #a9d6e5; /* Pale almost white blue text */
+  --text-secondary: #89c2d9; /* Very light blue secondary */
+  --border-color: #2a6f97; /* Medium blue border */
+  --shadow-sm: 0 1px 3px rgba(1, 42, 74, 0.3);
+  --shadow-md: 0 4px 6px rgba(1, 42, 74, 0.4);
+  --shadow-lg: 0 10px 15px rgba(1, 42, 74, 0.5);
+  --shadow-xl: 0 20px 25px rgba(1, 42, 74, 0.6);
+  --hover-bg: #01497c; /* Medium-dark blue */
 }
 
 * {

@@ -83,4 +83,9 @@ export class ProjectsController {
       req.user.userId
     );
   }
+
+  @Post("update-colors")
+  updateAllProjectColors() {
+    return this.projectsService.updateAllProjectColors();
+  }
 }

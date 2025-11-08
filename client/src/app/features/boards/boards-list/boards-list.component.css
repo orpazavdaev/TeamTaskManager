@@ -81,7 +81,7 @@ h1 {
 }
 
 .btn-primary:active {
-  background: #cdb4db; /* Purple bright */
+  background: #2a6f97; /* Medium blue with teal hint */
 }
 
 .btn-primary:disabled {

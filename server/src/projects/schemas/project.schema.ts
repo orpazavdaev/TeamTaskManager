@@ -23,7 +23,7 @@ export class Project {
   @Prop({ ref: "Board", default: null })
   activeBoardId: MongooseSchema.Types.ObjectId | null;
 
-  @Prop({ default: "#CDB4DB" })
+  @Prop({ default: "#2A6F97" })
   color: string;
 }
 

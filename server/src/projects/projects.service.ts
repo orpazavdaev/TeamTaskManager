@@ -202,4 +202,35 @@ export class ProjectsService {
     this.appGateway.broadcastProjectUpdate(updatedProject, "update");
     return updatedProject;
   }
+
+  async updateAllProjectColors() {
+    // Update all projects with old colors to new blue color
+    const result = await this.projectModel.updateMany(
+      {
+        color: {
+          $in: [
+            "#CDB4DB",
+            "#cdb4db",
+            "#FFC8DD",
+            "#ffc8dd",
+            "#FFAFCC",
+            "#ffafcc",
+            "#BDE0FE",
+            "#bde0fe",
+            "#A2D2FF",
+            "#a2d2ff",
+            "#d782ba",
+            "#e18ad4",
+            "#eeb1d5",
+            "#efc7e5",
+          ],
+        },
+      },
+      { $set: { color: "#2A6F97" } }
+    );
+    return {
+      message: `Updated ${result.modifiedCount} projects to new color scheme`,
+      modifiedCount: result.modifiedCount,
+    };
+  }
 }

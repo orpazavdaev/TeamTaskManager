@@ -104,9 +104,9 @@ export class ProfileComponent implements OnInit {
 
   getBoardColor(boardId: string | any): string {
     if (typeof boardId === 'string') {
-      return '#CDB4DB';
+      return '#2A6F97';
     }
-    return (boardId as any)?.color || '#CDB4DB';
+    return (boardId as any)?.color || '#2A6F97';
   }
 
   getBoardName(boardId: string | any): string {
@@ -119,22 +119,22 @@ export class ProfileComponent implements OnInit {
   // Generate a random color for each task border based on task ID
   getTaskBorderColor(taskId: string): string {
     const colors = [
-      '#CDB4DB' /* Purple bright */,
-      '#FFC8DD' /* Pink bright */,
-      '#FFAFCC' /* Pink medium */,
-      '#BDE0FE' /* Blue bright */,
-      '#A2D2FF' /* Blue medium */,
-      '#E8D4F0' /* Light purple */,
-      '#F0D4E8' /* Light pink-purple */,
-      '#D4E8F0' /* Light blue-purple */,
-      '#E8F0D4' /* Light green-blue */,
-      '#F0E8D4' /* Light beige */,
-      '#D4F0E8' /* Light blue-green */,
-      '#F0D4E0' /* Light pink */,
-      '#E0D4F0' /* Light purple-blue */,
-      '#D4F0E0' /* Light green */,
-      '#F0E0D4' /* Light peach */,
-      '#E0F0D4' /* Light yellow-green */,
+      '#012A4A' /* Dark navy blue */,
+      '#013A63' /* Dark blue */,
+      '#01497C' /* Medium-dark blue */,
+      '#014F86' /* Slightly lighter medium-dark blue */,
+      '#2A6F97' /* Medium blue with teal hint */,
+      '#2C7DA0' /* Medium teal-blue */,
+      '#468FAF' /* Light muted blue */,
+      '#61A5C2' /* Light sky blue */,
+      '#89C2D9' /* Very light blue */,
+      '#A9D6E5' /* Pale almost white blue */,
+      '#012A4A' /* Repeat for more variety */,
+      '#013A63' /* Repeat */,
+      '#01497C' /* Repeat */,
+      '#2A6F97' /* Repeat */,
+      '#61A5C2' /* Repeat */,
+      '#89C2D9' /* Repeat */,
     ];
     // Use task ID to generate a consistent color for each task
     const hash = taskId.split('').reduce((acc, char) => {

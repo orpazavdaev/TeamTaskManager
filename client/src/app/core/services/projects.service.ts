@@ -47,4 +47,8 @@ export class ProjectsService {
   removeBoardFromProject(projectId: string, boardId: string): Observable<Project> {
     return this.http.delete<Project>(`${this.API_URL}/${projectId}/boards/${boardId}`);
   }
+
+  updateAllColors(): Observable<any> {
+    return this.http.post(`${this.API_URL}/update-colors`, {});
+  }
 }

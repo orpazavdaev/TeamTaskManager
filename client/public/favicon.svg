@@ -1,0 +1,26 @@
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <!-- Logo: Abstract network/circuit design in light blue -->
+  <g id="logo-icon">
+    <!-- Left column: three small dots -->
+    <circle cx="4" cy="8" r="1.2" fill="#61a5c2"/>
+    <circle cx="4" cy="16" r="1.2" fill="#61a5c2"/>
+    <circle cx="4" cy="24" r="1.2" fill="#61a5c2"/>
+    
+    <!-- Center: large dot with connecting lines -->
+    <circle cx="14" cy="16" r="2.5" fill="#61a5c2"/>
+    
+    <!-- Lines from center to various points -->
+    <line x1="14" y1="16" x2="4" y2="8" stroke="#61a5c2" stroke-width="1" stroke-linecap="round"/>
+    <line x1="14" y1="16" x2="4" y2="16" stroke="#61a5c2" stroke-width="1" stroke-linecap="round"/>
+    <line x1="14" y1="16" x2="4" y2="24" stroke="#61a5c2" stroke-width="1" stroke-linecap="round"/>
+    <line x1="14" y1="16" x2="24" y2="8" stroke="#61a5c2" stroke-width="1" stroke-linecap="round"/>
+    <line x1="14" y1="16" x2="24" y2="16" stroke="#61a5c2" stroke-width="1" stroke-linecap="round"/>
+    <line x1="14" y1="16" x2="24" y2="24" stroke="#61a5c2" stroke-width="1" stroke-linecap="round"/>
+    
+    <!-- Right column: three small dots -->
+    <circle cx="24" cy="8" r="1.2" fill="#61a5c2"/>
+    <circle cx="24" cy="16" r="1.2" fill="#61a5c2"/>
+    <circle cx="24" cy="24" r="1.2" fill="#61a5c2"/>
+  </g>
+</svg>
+

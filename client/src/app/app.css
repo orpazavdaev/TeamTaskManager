@@ -1,19 +1,19 @@
 :root {
-  --primary-color: #cdb4db; /* Purple bright */
-  --primary-hover: #ffc8dd; /* Pink bright */
+  --primary-color: #2a6f97; /* Medium blue with teal hint */
+  --primary-hover: #468faf; /* Light muted blue */
   --bg-color: #f0f8ff; /* Very light blue/white background */
   --card-bg: #ffffff;
-  --text-color: #2d3748;
-  --text-secondary: #718096;
-  --border-color: #a2d2ff; /* Blue medium border */
+  --text-color: #012a4a; /* Dark navy blue */
+  --text-secondary: #01497c; /* Medium-dark blue */
+  --border-color: #61a5c2; /* Light sky blue border */
 }
 
 .dark-mode {
-  --bg-color: #1a1f2e;
-  --card-bg: #252a3a;
-  --text-color: #ffc8dd; /* Pink bright text */
-  --text-secondary: #bde0fe; /* Blue bright secondary */
-  --border-color: #cdb4db; /* Purple bright border */
+  --bg-color: #012a4a; /* Dark navy blue */
+  --card-bg: #013a63; /* Dark blue */
+  --text-color: #a9d6e5; /* Pale almost white blue text */
+  --text-secondary: #89c2d9; /* Very light blue secondary */
+  --border-color: #2a6f97; /* Medium blue border */
 }
 
 * {

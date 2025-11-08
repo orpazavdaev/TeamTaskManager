@@ -31,12 +31,30 @@ export class ProjectsListComponent implements OnInit {
   ngOnInit(): void {
     const token = this.authService.getToken();
     if (token) {
+      // Update all project colors to new blue palette
+      this.projectsService.updateAllColors().subscribe({
+        next: (result) => {
+          console.log('Updated project colors:', result);
+        },
+        error: (err) => {
+          console.error('Failed to update project colors:', err);
+        },
+      });
       this.loadProjects();
       this.wsService.connect();
     } else {
       setTimeout(() => {
         const tokenAfterWait = this.authService.getToken();
         if (tokenAfterWait) {
+          // Update all project colors to new blue palette
+          this.projectsService.updateAllColors().subscribe({
+            next: (result) => {
+              console.log('Updated project colors:', result);
+            },
+            error: (err) => {
+              console.error('Failed to update project colors:', err);
+            },
+          });
           this.loadProjects();
           this.wsService.connect();
         } else {
