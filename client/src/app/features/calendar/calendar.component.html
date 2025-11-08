@@ -89,20 +89,21 @@
         </label>
       </div>
       <div class="form-group">
-        <label>Start Date *</label>
-        <input type="date" formControlName="date" class="form-input" required />
+        <label>Start Date & Time *</label>
+        <input
+          [type]="eventForm.value.isAllDay ? 'date' : 'datetime-local'"
+          formControlName="startDateTime"
+          class="form-input"
+          required
+        />
       </div>
       <div class="form-group">
-        <label>End Date (for multi-day events)</label>
-        <input type="date" formControlName="endDate" class="form-input" />
-      </div>
-      <div class="form-group" *ngIf="!eventForm.value.isAllDay">
-        <label>Start Time</label>
-        <input type="time" formControlName="startTime" class="form-input" />
-      </div>
-      <div class="form-group" *ngIf="!eventForm.value.isAllDay">
-        <label>End Time</label>
-        <input type="time" formControlName="endTime" class="form-input" />
+        <label>End Date & Time (for multi-day events)</label>
+        <input
+          [type]="eventForm.value.isAllDay ? 'date' : 'datetime-local'"
+          formControlName="endDateTime"
+          class="form-input"
+        />
       </div>
       <div class="form-group">
         <label>Type *</label>
@@ -156,20 +157,21 @@
         </label>
       </div>
       <div class="form-group">
-        <label>Start Date *</label>
-        <input type="date" formControlName="date" class="form-input" required />
+        <label>Start Date & Time *</label>
+        <input
+          [type]="eventForm.value.isAllDay ? 'date' : 'datetime-local'"
+          formControlName="startDateTime"
+          class="form-input"
+          required
+        />
       </div>
       <div class="form-group">
-        <label>End Date (for multi-day events)</label>
-        <input type="date" formControlName="endDate" class="form-input" />
-      </div>
-      <div class="form-group" *ngIf="!eventForm.value.isAllDay">
-        <label>Start Time</label>
-        <input type="time" formControlName="startTime" class="form-input" />
-      </div>
-      <div class="form-group" *ngIf="!eventForm.value.isAllDay">
-        <label>End Time</label>
-        <input type="time" formControlName="endTime" class="form-input" />
+        <label>End Date & Time (for multi-day events)</label>
+        <input
+          [type]="eventForm.value.isAllDay ? 'date' : 'datetime-local'"
+          formControlName="endDateTime"
+          class="form-input"
+        />
       </div>
       <div class="form-group">
         <label>Type *</label>

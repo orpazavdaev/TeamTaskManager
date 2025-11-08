@@ -55,10 +55,8 @@ export class CalendarComponent implements OnInit, OnDestroy {
     this.eventForm = this.fb.group({
       title: ['', [Validators.required]],
       description: [''],
-      date: ['', [Validators.required]],
-      endDate: [null],
-      startTime: [null],
-      endTime: [null],
+      startDateTime: ['', [Validators.required]],
+      endDateTime: [null],
       isAllDay: [false],
       type: [EventType.CUSTOM, [Validators.required]],
       projectId: ['', [Validators.required]],
@@ -203,8 +201,9 @@ export class CalendarComponent implements OnInit, OnDestroy {
 
   openCreateDialog(day?: Date): void {
     if (day) {
+      const dateTime = format(day, "yyyy-MM-dd'T'HH:mm");
       this.eventForm.patchValue({
-        date: format(day, 'yyyy-MM-dd'),
+        startDateTime: dateTime,
       });
     }
     if (this.selectedProject()) {
@@ -222,9 +221,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
       color: '#2A6F97',
       boardId: null,
       taskId: null,
-      endDate: null,
-      startTime: null,
-      endTime: null,
+      endDateTime: null,
       isAllDay: false,
     });
   }
@@ -232,13 +229,22 @@ export class CalendarComponent implements OnInit, OnDestroy {
   createEvent(): void {
     if (this.eventForm.valid) {
       const formValue = this.eventForm.value;
+      const startDateTime = new Date(formValue.startDateTime);
+      const endDateTime = formValue.endDateTime ? new Date(formValue.endDateTime) : null;
+
+      // Extract date and time
+      const date = format(startDateTime, 'yyyy-MM-dd');
+      const endDate = endDateTime ? format(endDateTime, 'yyyy-MM-dd') : null;
+      const startTime = formValue.isAllDay ? null : format(startDateTime, 'HH:mm');
+      const endTime = formValue.isAllDay ? null : endDateTime ? format(endDateTime, 'HH:mm') : null;
+
       const eventData: CreateCalendarEventDto = {
         title: formValue.title,
         description: formValue.description || undefined,
-        date: new Date(formValue.date).toISOString(),
-        endDate: formValue.endDate ? new Date(formValue.endDate).toISOString() : null,
-        startTime: formValue.isAllDay ? null : formValue.startTime || null,
-        endTime: formValue.isAllDay ? null : formValue.endTime || null,
+        date: startDateTime.toISOString(),
+        endDate: endDateTime ? endDateTime.toISOString() : null,
+        startTime: startTime,
+        endTime: endTime,
         isAllDay: formValue.isAllDay || false,
         type: formValue.type,
         projectId: formValue.projectId,
@@ -262,13 +268,38 @@ export class CalendarComponent implements OnInit, OnDestroy {
 
   openEditDialog(event: CalendarEvent): void {
     this.selectedEvent.set(event);
+    const eventDate = new Date(event.date);
+    const eventEndDate = event.endDate ? new Date(event.endDate) : null;
+
+    // Combine date and time for startDateTime
+    let startDateTime = format(eventDate, "yyyy-MM-dd'T'HH:mm");
+    if (event.startTime && !event.isAllDay) {
+      const [hours, minutes] = event.startTime.split(':');
+      const dateWithTime = new Date(eventDate);
+      dateWithTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+      startDateTime = format(dateWithTime, "yyyy-MM-dd'T'HH:mm");
+    } else if (event.isAllDay) {
+      startDateTime = format(eventDate, 'yyyy-MM-dd');
+    }
+
+    // Combine date and time for endDateTime
+    let endDateTime = null;
+    if (eventEndDate) {
+      if (event.endTime && !event.isAllDay) {
+        const [hours, minutes] = event.endTime.split(':');
+        const dateWithTime = new Date(eventEndDate);
+        dateWithTime.setHours(parseInt(hours), parseInt(minutes), 0, 0);
+        endDateTime = format(dateWithTime, "yyyy-MM-dd'T'HH:mm");
+      } else {
+        endDateTime = format(eventEndDate, event.isAllDay ? 'yyyy-MM-dd' : "yyyy-MM-dd'T'HH:mm");
+      }
+    }
+
     this.eventForm.patchValue({
       title: event.title,
       description: event.description || '',
-      date: format(new Date(event.date), 'yyyy-MM-dd'),
-      endDate: event.endDate ? format(new Date(event.endDate), 'yyyy-MM-dd') : null,
-      startTime: event.startTime || null,
-      endTime: event.endTime || null,
+      startDateTime: startDateTime,
+      endDateTime: endDateTime,
       isAllDay: event.isAllDay || false,
       type: event.type,
       projectId: typeof event.projectId === 'string' ? event.projectId : event.projectId._id,
@@ -295,9 +326,7 @@ export class CalendarComponent implements OnInit, OnDestroy {
       color: '#2A6F97',
       boardId: null,
       taskId: null,
-      endDate: null,
-      startTime: null,
-      endTime: null,
+      endDateTime: null,
       isAllDay: false,
     });
   }
@@ -305,13 +334,20 @@ export class CalendarComponent implements OnInit, OnDestroy {
   updateEvent(): void {
     if (this.eventForm.valid && this.selectedEvent()) {
       const formValue = this.eventForm.value;
+      const startDateTime = new Date(formValue.startDateTime);
+      const endDateTime = formValue.endDateTime ? new Date(formValue.endDateTime) : null;
+
+      // Extract date and time
+      const startTime = formValue.isAllDay ? null : format(startDateTime, 'HH:mm');
+      const endTime = formValue.isAllDay ? null : endDateTime ? format(endDateTime, 'HH:mm') : null;
+
       const eventData: UpdateCalendarEventDto = {
         title: formValue.title,
         description: formValue.description || undefined,
-        date: new Date(formValue.date).toISOString(),
-        endDate: formValue.endDate ? new Date(formValue.endDate).toISOString() : null,
-        startTime: formValue.isAllDay ? null : formValue.startTime || null,
-        endTime: formValue.isAllDay ? null : formValue.endTime || null,
+        date: startDateTime.toISOString(),
+        endDate: endDateTime ? endDateTime.toISOString() : null,
+        startTime: startTime,
+        endTime: endTime,
         isAllDay: formValue.isAllDay || false,
         type: formValue.type,
         boardId: formValue.boardId && formValue.boardId.trim() ? formValue.boardId : undefined,
