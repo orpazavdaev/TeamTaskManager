@@ -13,9 +13,16 @@
       <nav class="header-nav">
         <a routerLink="/projects" class="nav-link">Projects</a>
         <a routerLink="/calendar" class="nav-link">📅 Calendar</a>
-        <a routerLink="/profile" class="nav-link">Profile</a>
       </nav>
-      <a routerLink="/profile" class="user-name profile-link">{{ user()?.name }}</a>
+      <div class="user-menu-container">
+        <button class="user-name profile-link" (click)="toggleUserMenu()">
+          {{ user()?.name }}
+        </button>
+        <div class="user-menu" *ngIf="showUserMenu()">
+          <button class="user-menu-item" (click)="navigateToProfile()">👤 Profile</button>
+          <button class="user-menu-item" (click)="logout()">🚪 Logout</button>
+        </div>
+      </div>
       <button
         class="theme-toggle"
         (click)="toggleTheme()"
@@ -23,7 +30,6 @@
       >
         {{ isDarkMode() ? '☀️' : '🌙' }}
       </button>
-      <button class="btn-logout" (click)="logout()">Logout</button>
     </div>
     <ng-template #notAuthenticated>
       <div class="header-right">
