@@ -676,6 +676,19 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 - `signal()` - יוצר signal
 - `computed()` - יוצר computed signal (תלוי ב-signals אחרים)
 
+**CDK (Component Dev Kit):**
+
+- **מה זה?** Angular CDK - ספרייה של Angular שמספקת כלים ופונקציונליות לבניית קומפוננטים
+- **למה זה חשוב?** מאפשר ליצור פיצ'רים מתקדמים בלי לכתוב הכל מאפס
+- **מה משתמשים בו בפרויקט?**
+  - **CDK Drag & Drop** - להעברת משימות בין סטטוסים (TODO → IN_PROGRESS → DONE)
+  - מאפשר למשוך (drag) משימה ולשחרר (drop) אותה בעמודה אחרת
+- **איך זה עובד?**
+  - `cdkDropList` - מגדיר אזור שאפשר לשחרר בו (כמו עמודת TODO)
+  - `cdkDrag` - מגדיר אלמנט שאפשר למשוך (כמו כרטיס משימה)
+  - `cdkDropListDropped` - event שקורה כשמשהו משוחרר
+  - `transferArrayItem()` - מעביר משימה בין מערכים (בין סטטוסים)
+
 ---
 
 ## 🖥️ SERVER (NestJS Backend)
