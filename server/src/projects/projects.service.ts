@@ -86,22 +86,6 @@ export class ProjectsService {
       .populate("boards", "name color")
       .populate("activeBoardId", "name color")
       .limit(50);
-    console.log(
-      "Search public projects - searchTerm:",
-      searchTerm,
-      "found:",
-      projects.length
-    );
-    projects.forEach((p) => {
-      console.log(
-        "  - Project:",
-        p.name,
-        "isPublic:",
-        p.isPublic,
-        "id:",
-        p._id
-      );
-    });
     return projects;
   }
 

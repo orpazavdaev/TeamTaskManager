@@ -93,8 +93,6 @@ export class BoardsService {
   }
 
   async findOne(id: string, userId: string) {
-    console.log("Finding board with ID:", id, "for user:", userId);
-
     // First, try to find board by direct access (owner or member)
     let board = await this.boardModel
       .findOne({
@@ -104,8 +102,6 @@ export class BoardsService {
       .populate("ownerId", "name email")
       .populate("members", "name email")
       .populate("projectId", "name members ownerId");
-
-    console.log("Board found by direct access:", board ? "Yes" : "No");
 
     // If not found, check if board belongs to a project the user is a member of
     if (!board) {
@@ -130,29 +126,9 @@ export class BoardsService {
             member._id?.toString() === userId || member.toString() === userId
         );
 
-        console.log("Board belongs to project:", project.name);
-        console.log("User is project owner:", isProjectOwner);
-        console.log("User is project member:", isProjectMember);
-
         if (isProjectOwner || isProjectMember) {
           board = boardWithProject;
-          console.log("Board access granted through project membership");
         }
-      }
-    }
-
-    if (board) {
-      console.log("Board ownerId:", board.ownerId);
-      console.log("Board members:", board.members);
-    } else {
-      // Check if board exists at all
-      const boardExists = await this.boardModel.findById(id);
-      console.log("Board exists in DB:", boardExists ? "Yes" : "No");
-      if (boardExists) {
-        console.log("Board exists but user does not have access");
-        console.log("Board ownerId:", boardExists.ownerId);
-        console.log("Board members:", boardExists.members);
-        console.log("Board projectId:", boardExists.projectId);
       }
     }
 
