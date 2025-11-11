@@ -6,9 +6,10 @@
 
 1. [הכנה](#הכנה)
 2. [העלאת Backend ל-Railway](#העלאת-backend-ל-railway)
-3. [העלאת Frontend ל-Vercel](#העלאת-frontend-ל-vercel)
-4. [קישור Frontend ל-Backend](#קישור-frontend-ל-backend)
-5. [פתרון בעיות](#פתרון-בעיות)
+3. [העלאת Backend ל-Render (חלופה ל-Railway)](#העלאת-backend-ל-render-חלופה-ל-railway)
+4. [העלאת Frontend ל-Vercel](#העלאת-frontend-ל-vercel)
+5. [קישור Frontend ל-Backend](#קישור-frontend-ל-backend)
+6. [פתרון בעיות](#פתרון-בעיות)
 
 ---
 
@@ -82,10 +83,78 @@ PORT=3000
 
 ### שלב 5: קבלת ה-URL של Backend
 
-1. לאחר שה-deployment מסתיים, Railway יצור URL אוטומטי
-2. לחץ על **"Settings"** → **"Domains"**
-3. תוכל לראות את ה-URL (למשל: `https://your-app-name.up.railway.app`)
+1. לאחר שה-deployment מסתיים, לך ל-**"Settings"** → **"Networking"**
+2. לחץ על הכפתור **"Generate Domain"** (הכפתור הסגול עם אייקון הברק)
+3. Railway ייצור URL אוטומטי (למשל: `https://your-app-name.up.railway.app`)
+4. ה-URL יופיע מתחת לכפתורים
+5. **שמור את ה-URL הזה** - נצטרך אותו להגדרת Frontend
+
+**⚠️ חשוב:** אם ה-URL לא מופיע, ודאי שה-deployment הסתיים בהצלחה (בדוק ב-**"Deployments"**)
+
+---
+
+## העלאת Backend ל-Render (חלופה ל-Railway)
+
+אם Railway לא עובד בגלל "Limited Access", השתמש ב-Render - שירות דומה עם 750 שעות חינם בחודש.
+
+### שלב 1: יצירת פרויקט ב-Render
+
+1. לך ל-[render.com](https://render.com)
+2. לחץ על **"Get Started"** או **"Sign Up"**
+3. התחבר עם **GitHub** (התחברות עם GitHub)
+4. לחץ על **"New +"** → **"Web Service"**
+5. בחר **"Connect GitHub"** אם עדיין לא חיברת
+6. בחר את ה-repository שלך
+7. Render יזהה את הפרויקט
+
+### שלב 2: הגדרת Build Settings
+
+1. תחת **"Name"** - הזן שם לשרת (למשל: `teamtaskmanager-backend`)
+2. תחת **"Region"** - בחר את האזור הקרוב אליך (למשל: `Frankfurt (EU)` או `Oregon (US West)`)
+3. תחת **"Branch"** - השאר `main` (או `master` אם זה ה-branch שלך)
+4. תחת **"Root Directory"** - הזן: `server`
+5. תחת **"Runtime"** - בחר `Node`
+6. תחת **"Build Command"** - הזן:
+   ```
+   npm install && npm run build
+   ```
+7. תחת **"Start Command"** - הזן:
+   ```
+   npm start
+   ```
+
+### שלב 3: הגדרת Environment Variables
+
+1. תחת **"Environment Variables"** לחץ על **"Add Environment Variable"**
+2. הוסף את המשתנים הבאים (לחץ על **"Add"** אחרי כל אחד):
+
+```
+MONGODB_URI=mongodb+srv://YOUR_USERNAME:YOUR_PASSWORD@cluster0.xxxxx.mongodb.net/teamtaskmanager?retryWrites=true&w=majority
+JWT_SECRET=your-super-secret-jwt-key-here-min-32-characters
+JWT_EXPIRES_IN=7d
+FRONTEND_URL=https://YOUR_VERCEL_URL.vercel.app
+PORT=3000
+```
+
+**⚠️ חשוב:**
+
+- החלף את `YOUR_USERNAME` ו-`YOUR_PASSWORD` עם הפרטים שלך מ-MongoDB Atlas
+- החלף את `cluster0.xxxxx` עם ה-cluster שלך
+- החלף את `YOUR_VERCEL_URL` עם ה-URL של Vercel (נעדכן אחרי שנעלה את Frontend)
+- `JWT_SECRET` צריך להיות מחרוזת ארוכה ומורכבת (לפחות 32 תווים)
+
+### שלב 4: Deploy
+
+1. לחץ על **"Create Web Service"**
+2. Render יתחיל build (זה יכול לקחת כמה דקות)
+3. לאחר שה-build מסתיים, Render יצור URL אוטומטי (למשל: `https://teamtaskmanager-backend.onrender.com`)
 4. **שמור את ה-URL הזה** - נצטרך אותו להגדרת Frontend
+
+**⚠️ חשוב:**
+
+- ב-Render, השרת נכנס למצב שינה אחרי 15 דקות של חוסר פעילות (ב-Free Tier)
+- הפעלה ראשונה אחרי שינה יכולה לקחת 30-60 שניות
+- זה נורמלי ב-Free Tier
 
 ---
 
@@ -117,10 +186,17 @@ PORT=3000
 
 1. תחת **"Environment Variables"** לחץ על **"Add"**
 2. הוסף את המשתנה הבא:
+
    ```
-   NG_APP_API_URL=https://YOUR_RAILWAY_URL.railway.app
+   NG_APP_API_URL=https://YOUR_BACKEND_URL
    ```
-   (החלף את `YOUR_RAILWAY_URL` עם ה-URL שקיבלת מ-Railway)
+
+   (החלף את `YOUR_BACKEND_URL` עם ה-URL שקיבלת מ-Railway או Render)
+
+   **דוגמאות:**
+
+   - אם השתמשת ב-Railway: `https://your-app.up.railway.app`
+   - אם השתמשת ב-Render: `https://your-app.onrender.com`
 
 **⚠️ חשוב:**
 
@@ -200,6 +276,50 @@ PORT=3000
 1. ודא ש-`JWT_SECRET` ב-Railway זהה למה שהיה מקומית
 2. ודא שה-`JWT_SECRET` ארוך מספיק (לפחות 32 תווים)
 
+### בעיה: "Not Found" ב-Railway (דף שגיאה של Railway)
+
+**פתרון:**
+
+1. **בדוק את ה-Deployment:**
+
+   - לך ל-Railway → הפרויקט → **"Deployments"**
+   - בדוק אם ה-deployment האחרון הצליח (צריך להיות ירוק ✓)
+   - אם יש שגיאה (אדום ✗), לחץ על ה-deployment ובדוק את ה-Logs
+
+2. **בדוק את ה-Logs:**
+
+   - לך ל-Railway → הפרויקט → **"Deployments"** → לחץ על ה-deployment האחרון
+   - לחץ על **"Logs"** או **"View Logs"**
+   - חפש שגיאות (אדום) או הודעות שגיאה
+   - ודא שה-Server רץ: חפש הודעה כמו `🚀 Server is running on: http://localhost:3000`
+
+3. **ודא שה-Build Settings נכונים:**
+
+   - לך ל-Railway → הפרויקט → **"Settings"** → **"Build"**
+   - ודא ש-`Build Command` = `cd server && npm install && npm run build`
+   - ודא ש-`Start Command` = `cd server && npm start`
+   - ודא ש-`Root Directory` = ריק (או לא מוגדר)
+
+4. **ודא שה-Environment Variables מוגדרים:**
+
+   - לך ל-Railway → הפרויקט → **"Variables"**
+   - ודא שיש:
+     - `MONGODB_URI` (עם ה-URI הנכון מ-MongoDB Atlas)
+     - `JWT_SECRET` (לפחות 32 תווים)
+     - `JWT_EXPIRES_IN=7d`
+     - `PORT=3000` (או השאר ריק - Railway יקבע אוטומטית)
+     - `FRONTEND_URL` (אפשר להשאיר ריק עד שנעלה את Frontend)
+
+5. **בצע Redeploy:**
+
+   - לך ל-Railway → הפרויקט → **"Deployments"**
+   - לחץ על ה-deployment האחרון → **"Redeploy"**
+
+6. **אם עדיין לא עובד:**
+   - בדוק את ה-Logs שוב - חפש שגיאות MongoDB connection
+   - ודא שה-IP whitelist ב-MongoDB Atlas כולל את כל ה-IPs (0.0.0.0/0)
+   - ודא שה-MONGODB_URI נכון (כולל שם המשתמש והסיסמה)
+
 ### בעיה: Build נכשל ב-Railway
 
 **פתרון:**
@@ -216,13 +336,91 @@ PORT=3000
 2. ודא ש-`Output Directory` מוגדר ל-`dist/client-app/browser`
 3. בדוק את הלוגים ב-Vercel לראות מה השגיאה המדויקת
 
-### בעיה: האתר לא נטען או מראה 404
+### בעיה: האתר לא נטען או מראה רק רקע תכלת
 
-**פתרון:**
+**פתרון שלב אחר שלב:**
 
-1. ודא ש-`vercel.json` נמצא ב-root של הפרויקט
-2. ודא ש-`rewrites` מוגדר נכון ב-`vercel.json`
-3. בצע **Redeploy** ב-Vercel
+#### שלב 1: בדוק את ה-Console בדפדפן
+
+1. פתח את ה-URL של Vercel בדפדפן
+2. לחץ **F12** (או קליק ימני → **Inspect**)
+3. לך לטאב **Console**
+4. בדוק אם יש שגיאות JavaScript (אדומות)
+5. **העתק את כל השגיאות** - זה יעזור לנו לזהות את הבעיה
+
+#### שלב 2: בדוק את ה-Build Settings ב-Vercel
+
+1. לך ל-Vercel → הפרויקט → **Settings**
+2. בדוק את ההגדרות הבאות:
+
+   **אם יש לך `vercel.json` ב-root:**
+
+   - **Root Directory** = ריק (או לא מוגדר)
+   - **Build Command** = `cd client && npm install && npm run build` (או השאר Auto)
+   - **Output Directory** = `client/dist/client-app/browser`
+
+   **אם אין לך `vercel.json` או רוצה להגדיר ב-Vercel:**
+
+   - **Root Directory** = `client`
+   - **Build Command** = `npm run build` (או השאר Auto)
+   - **Output Directory** = `dist/client-app/browser`
+
+#### שלב 3: בדוק את ה-Environment Variables
+
+1. לך ל-Vercel → הפרויקט → **Settings** → **Environment Variables**
+2. ודא שיש משתנה:
+   ```
+   NG_APP_API_URL=https://YOUR_RENDER_URL.onrender.com
+   ```
+   (החלף `YOUR_RENDER_URL` עם ה-URL האמיתי של Render)
+3. **ודא שה-URL:**
+   - מתחיל עם `https://`
+   - **ללא סלאש בסוף** (`/`)
+   - נכון (העתק אותו מ-Render)
+
+#### שלב 4: בדוק את ה-Logs ב-Vercel
+
+1. לך ל-Vercel → הפרויקט → **Deployments**
+2. לחץ על ה-deployment האחרון
+3. לך לטאב **Logs**
+4. בדוק אם יש שגיאות ב-build
+5. חפש הודעות כמו:
+   - `Build completed successfully` ✓
+   - `Error:` ✗
+   - `Failed to build` ✗
+
+#### שלב 5: בצע Redeploy
+
+1. לך ל-Vercel → הפרויקט → **Deployments**
+2. לחץ על ה-deployment האחרון → **Redeploy**
+3. חכה שה-build מסתיים
+4. רענן את הדף בדפדפן
+
+#### שלב 6: אם עדיין לא עובד
+
+**בדוק את `vercel.json`:**
+
+- ודא ש-`vercel.json` נמצא ב-**root** של הפרויקט (לא בתוך `client/`)
+- ודא שהתוכן נכון (ראה את הקובץ במדריך)
+
+**בדוק את ה-Console שוב:**
+
+- פתח את ה-Console (F12)
+- חפש שגיאות הקשורות ל:
+  - `NG_APP_API_URL`
+  - `environment.apiUrl`
+  - `Failed to load`
+  - `404 Not Found`
+
+**אם יש שגיאה "Cannot find module" או "Failed to load":**
+
+- זה אומר שה-Output Directory לא נכון
+- נסה לשנות את ה-Output Directory ב-Vercel Settings
+
+**אם יש שגיאת CORS:**
+
+- ודא ש-`FRONTEND_URL` ב-Render מכיל את ה-URL של Vercel
+- ודא שה-URL נכון ללא סלאש בסוף
 
 ---
 
