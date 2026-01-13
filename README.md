@@ -1,324 +1,295 @@
-# 🧠 Team Task Manager - מערכת ניהול משימות חכמה לצוותים
+<div align="center">
 
-מערכת ניהול משימות מלאה עם תכונות מתקדמות של Real-Time Collaboration, Drag & Drop, ו-Authentication מלא.
+# 🚀 Team Task Manager
 
-## 🎯 מה זה?
+### Real-Time Collaborative Project Management Platform
 
-אפליקציה לניהול משימות בסגנון Trello/Monday.com אבל בגרסה קלה, נקייה ומותאמת אישית, עם:
+[![Angular](https://img.shields.io/badge/Angular-18-DD0031?style=for-the-badge&logo=angular&logoColor=white)](https://angular.io/)
+[![NestJS](https://img.shields.io/badge/NestJS-10-E0234E?style=for-the-badge&logo=nestjs&logoColor=white)](https://nestjs.com/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-47A248?style=for-the-badge&logo=mongodb&logoColor=white)](https://www.mongodb.com/)
+[![Socket.IO](https://img.shields.io/badge/Socket.IO-4-010101?style=for-the-badge&logo=socket.io&logoColor=white)](https://socket.io/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 
-- ✅ JWT Authentication (התחברות/הרשמה)
-- ✅ Kanban Board עם Drag & Drop
-- ✅ Real-Time Updates באמצעות WebSockets
-- ✅ Dark/Light Mode
-- ✅ State Management עם Angular Signals
+**A full-stack, real-time task management application built with modern technologies.**
 
-## 🏗️ טכנולוגיות
+[Features](#-key-features) • [Tech Stack](#-tech-stack) • [Architecture](#-architecture) • [Installation](#-installation)
 
-### Backend
+</div>
 
-- **NestJS** - Framework Node.js מודרני
-- **MongoDB** - מסד נתונים NoSQL
-- **JWT** - Authentication
-- **Socket.IO** - Real-Time Communication
-- **Passport** - Authentication Strategies
+---
+
+## 📋 Overview
+
+**Team Task Manager** is a production-ready, full-stack web application that enables teams to collaborate on projects in real-time. Inspired by tools like Trello and Monday.com, this application demonstrates advanced software engineering practices including:
+
+- 🔄 **Real-Time Synchronization** - Instant updates across all connected clients using WebSockets
+- 🔐 **Secure Authentication** - JWT-based auth with protected routes and role-based access
+- 🎨 **Modern UI/UX** - Responsive design with Dark/Light mode and smooth animations
+- 📦 **Clean Architecture** - Modular, scalable codebase following industry best practices
+
+---
+
+## ✨ Key Features
+
+### 🔐 Authentication & Security
+- JWT-based authentication with secure token management
+- Automatic token refresh and session management
+- Protected routes with Angular Guards
+- Role-based access control (Owner/Member permissions)
+
+### 📊 Kanban Board
+- **Drag & Drop** functionality using Angular CDK
+- Three-column layout: TODO → IN PROGRESS → DONE
+- Real-time position updates across all clients
+- Visual priority indicators (Low/Medium/High)
+
+### ⚡ Real-Time Collaboration
+- WebSocket integration with Socket.IO
+- Instant task updates without page refresh
+- Automatic reconnection handling
+- Room-based broadcasting for efficient data sync
+
+### 🎨 User Experience
+- Dark/Light mode with persistent preferences
+- Fully responsive design (Mobile, Tablet, Desktop)
+- Smooth CSS animations and transitions
+- Intuitive task management with labels and priorities
+
+### 📅 Additional Modules
+- **Calendar View** - Visualize tasks and deadlines
+- **Project Management** - Organize boards into projects
+- **User Profiles** - Customizable user settings
+
+---
+
+## 🛠 Tech Stack
 
 ### Frontend
+| Technology | Purpose |
+|------------|---------|
+| **Angular 18** | Modern SPA framework with Standalone Components |
+| **Angular Signals** | Reactive state management |
+| **Angular CDK** | Drag & Drop functionality |
+| **RxJS** | Reactive programming and async operations |
+| **Socket.IO Client** | Real-time WebSocket communication |
+| **CSS3** | Custom styling with CSS Variables for theming |
 
-- **Angular 18** - Framework מודרני עם Standalone Components
-- **Angular CDK Drag & Drop** - Drag & Drop פונקציונליות
-- **Socket.IO Client** - חיבור Real-Time
-- **Angular Signals** - State Management מובנה
-- **RxJS** - Reactive Programming
+### Backend
+| Technology | Purpose |
+|------------|---------|
+| **NestJS** | Enterprise-grade Node.js framework |
+| **MongoDB + Mongoose** | NoSQL database with ODM |
+| **Passport.js** | Authentication middleware |
+| **JWT** | Stateless token-based authentication |
+| **Socket.IO** | Bi-directional real-time communication |
+| **bcrypt** | Secure password hashing |
 
-## 📁 מבנה הפרויקט
+### DevOps & Tools
+| Technology | Purpose |
+|------------|---------|
+| **TypeScript** | Type-safe development |
+| **Render/Vercel** | Cloud deployment |
+| **MongoDB Atlas** | Cloud database hosting |
+| **Git** | Version control |
+
+---
+
+## 🏗 Architecture
 
 ```
-teamtaskmanager/
-├── server/              # Backend (NestJS)
-│   ├── src/
-│   │   ├── auth/       # Authentication Module
-│   │   ├── boards/     # Boards Management
-│   │   ├── tasks/      # Tasks Management
-│   │   └── main.ts     # Entry Point
-│   └── package.json
+┌─────────────────────────────────────────────────────────────────┐
+│                        CLIENT (Angular 18)                       │
+├─────────────────────────────────────────────────────────────────┤
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────────┐  │
+│  │   Features  │  │    Core     │  │        Shared           │  │
+│  │  ─────────  │  │  ─────────  │  │     ───────────         │  │
+│  │  • Auth     │  │  • Guards   │  │  • Header Component     │  │
+│  │  • Boards   │  │  • Services │  │  • Dialog Components    │  │
+│  │  • Tasks    │  │  • Models   │  │  • Reusable UI          │  │
+│  │  • Calendar │  │  • HTTP     │  │                         │  │
+│  │  • Projects │  │    Intercep │  │                         │  │
+│  └─────────────┘  └─────────────┘  └─────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                    HTTP REST + WebSocket
+                              │
+┌─────────────────────────────────────────────────────────────────┐
+│                       SERVER (NestJS)                            │
+├─────────────────────────────────────────────────────────────────┤
+│  ┌─────────────┐  ┌─────────────┐  ┌─────────────────────────┐  │
+│  │   Modules   │  │  Gateway    │  │       Security          │  │
+│  │  ─────────  │  │  ─────────  │  │     ───────────         │  │
+│  │  • Auth     │  │  • Socket.IO│  │  • JWT Strategy         │  │
+│  │  • Boards   │  │  • Events   │  │  • Local Strategy       │  │
+│  │  • Tasks    │  │  • Rooms    │  │  • Guards               │  │
+│  │  • Calendar │  │             │  │  • Decorators           │  │
+│  │  • Projects │  │             │  │                         │  │
+│  └─────────────┘  └─────────────┘  └─────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────┘
+                              │
+                           Mongoose
+                              │
+┌─────────────────────────────────────────────────────────────────┐
+│                      DATABASE (MongoDB)                          │
+├─────────────────────────────────────────────────────────────────┤
+│     Users    │    Boards    │    Tasks    │   Calendar Events   │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### Project Structure
+
+```
+TeamTaskManager/
+├── client/                    # Angular Frontend
+│   └── src/
+│       └── app/
+│           ├── core/          # Guards, Interceptors, Services, Models
+│           ├── features/      # Feature Modules (Auth, Boards, Tasks, etc.)
+│           └── shared/        # Reusable Components
 │
-└── client/             # Frontend (Angular)
-    └── src/
-        └── app/
-            ├── core/           # Core Services, Guards, Models
-            ├── features/       # Feature Modules
-            │   ├── auth/      # Login/Register
-            │   ├── boards/    # Boards List & Detail
-            │   └── tasks/     # Task Management
-            └── shared/        # Shared Components
+├── server/                    # NestJS Backend
+│   └── src/
+│       ├── auth/             # Authentication Module
+│       ├── boards/           # Boards CRUD Module
+│       ├── tasks/            # Tasks CRUD Module
+│       ├── calendar/         # Calendar Module
+│       ├── projects/         # Projects Module
+│       └── app.gateway.ts    # WebSocket Gateway
+│
+└── README.md
 ```
 
-## 🚀 התקנה והרצה
+---
 
-### דרישות מקדימות
+## 🚀 Installation
 
+### Prerequisites
 - Node.js 18+
-- MongoDB (מותקן או Atlas)
-- npm או yarn
+- MongoDB (local or Atlas)
+- npm or yarn
 
-### הגדרת Backend
+### Quick Start
 
+**1. Clone the repository**
+```bash
+git clone https://github.com/yourusername/TeamTaskManager.git
+cd TeamTaskManager
+```
+
+**2. Setup Backend**
 ```bash
 cd server
 npm install
 
-# יצירת קובץ .env
+# Create environment file
 cp .env.example .env
-# ערוך את .env והוסף את המחרוזות המתאימות
-
-# הרץ את השרת
-npm run start:dev
+# Edit .env with your configuration
 ```
 
-השרת יעלה על `http://localhost:3000`
-
-**קובץ .env צריך לכלול:**
-
+`.env` configuration:
 ```env
 PORT=3000
-JWT_SECRET=your-secret-key-change-in-production
+JWT_SECRET=your-secure-secret-key
 JWT_EXPIRES_IN=7d
 MONGODB_URI=mongodb://localhost:27017/teamtaskmanager
 ```
 
-### הגדרת Frontend
-
+**3. Setup Frontend**
 ```bash
 cd client
 npm install
+```
 
-# הרץ את האפליקציה
+**4. Run the Application**
+
+```bash
+# Terminal 1 - Backend
+cd server
+npm run start:dev
+
+# Terminal 2 - Frontend
+cd client
 ng serve
 ```
 
-האפליקציה תעלה על `http://localhost:4200`
-
-## 📚 API Endpoints
-
-### Authentication
-
-- `POST /auth/register` - הרשמה
-- `POST /auth/login` - התחברות
-- `GET /auth/profile` - פרופיל משתמש (מוגן)
-
-### Boards
-
-- `GET /boards` - קבלת כל הלוחות
-- `GET /boards/:id` - קבלת לוח ספציפי
-- `POST /boards` - יצירת לוח חדש
-- `PATCH /boards/:id` - עדכון לוח
-- `DELETE /boards/:id` - מחיקת לוח
-
-### Tasks
-
-- `GET /tasks?boardId=:id` - קבלת כל המשימות של לוח
-- `GET /tasks/:id` - קבלת משימה ספציפית
-- `POST /tasks` - יצירת משימה חדשה
-- `PATCH /tasks/:id` - עדכון משימה
-- `PATCH /tasks/:id/move` - הזזת משימה (Drag & Drop)
-- `DELETE /tasks/:id` - מחיקת משימה
-
-## 🔌 WebSocket Events
-
-### Client → Server
-
-- `join-board` - הצטרפות ללוח
-- `leave-board` - עזיבת לוח
-
-### Server → Client
-
-- `task-update` - עדכון משימה (create/update/delete)
-- `board-update` - עדכון לוח (create/update/delete)
-
-## ✨ תכונות
-
-### 1. Authentication & Authorization
-
-- ✅ הרשמה והתחברות עם JWT
-- ✅ Guards להגנה על Routes
-- ✅ Token נשמר ב-LocalStorage
-- ✅ Auto-logout כשהטוקן פג תוקף
-
-### 2. Boards Management
-
-- ✅ יצירה, עריכה ומחיקה של לוחות
-- ✅ הצגת כל הלוחות של המשתמש
-- ✅ חיפוש לוחות
-- ✅ הרשאות (Owner/Members)
-
-### 3. Kanban Board
-
-- ✅ 3 עמודות: TODO, IN PROGRESS, DONE
-- ✅ Drag & Drop בין עמודות
-- ✅ מיון אוטומטי בתוך עמודה
-- ✅ עדכון Real-Time
-
-### 4. Task Management
-
-- ✅ יצירת משימה עם:
-  - כותרת ותיאור
-  - סטטוס
-  - עדיפות (Low/Medium/High)
-  - תגיות (Labels)
-- ✅ עריכת משימות
-- ✅ מחיקת משימות
-- ✅ הצגה ויזואלית לפי עדיפות
-
-### 5. Real-Time Collaboration
-
-- ✅ עדכונים בזמן אמת לכל המשתמשים
-- ✅ WebSocket connection אוטומטי
-- ✅ Reconnection אוטומטי
-
-### 6. UI/UX
-
-- ✅ Dark/Light Mode עם שמירה ב-LocalStorage
-- ✅ עיצוב מודרני ו-responsive
-- ✅ אנימציות חלקות
-- ✅ חווית משתמש מעולה
-
-### 7. State Management
-
-- ✅ Angular Signals לניהול State
-- ✅ Reactive Forms עם Validation
-- ✅ RxJS Observables
-
-## 🔐 הרשאות
-
-- **Owner** - בעל הלוח, יכול לערוך ולמחוק
-- **Member** - משתמש עם גישה ללוח, יכול לצפות ולערוך משימות
-
-## 📝 דוגמת שימוש
-
-### יצירת לוח חדש
-
-```typescript
-boardsService
-  .create({
-    name: "My Project",
-    description: "Project description",
-    color: "#4285F4",
-  })
-  .subscribe((board) => {
-    console.log("Board created:", board);
-  });
-```
-
-### יצירת משימה
-
-```typescript
-tasksService
-  .create({
-    title: "New Task",
-    description: "Task description",
-    boardId: "board-id",
-    priority: TaskPriority.HIGH,
-    labels: ["Bug", "Urgent"],
-  })
-  .subscribe((task) => {
-    console.log("Task created:", task);
-  });
-```
-
-### הזזת משימה (Drag & Drop)
-
-```typescript
-tasksService
-  .move(taskId, {
-    status: TaskStatus.IN_PROGRESS,
-    order: 0,
-  })
-  .subscribe((updatedTask) => {
-    console.log("Task moved:", updatedTask);
-  });
-```
-
-## 🛠️ פיתוח
-
-### הרצת Backend בפיתוח
-
-```bash
-cd server
-npm run start:dev  # עם hot-reload
-```
-
-### הרצת Frontend בפיתוח
-
-```bash
-cd client
-ng serve  # עם hot-reload
-```
-
-### Build לייצור
-
-```bash
-# Backend
-cd server
-npm run build
-npm start
-
-# Frontend
-cd client
-ng build --configuration production
-```
-
-## 📦 תלות עיקריות
-
-### Backend
-
-- @nestjs/core, @nestjs/common
-- @nestjs/mongoose
-- @nestjs/jwt, @nestjs/passport
-- @nestjs/websockets, socket.io
-- mongoose
-- bcrypt
-
-### Frontend
-
-- @angular/core, @angular/common
-- @angular/cdk
-- socket.io-client
-- rxjs
-
-## 🎨 עיצוב
-
-האפליקציה משתמשת ב:
-
-- CSS Variables לנושאים (Dark/Light Mode)
-- Grid Layout ל-Kanban Board
-- Flexbox לLayout
-- CSS Transitions לאנימציות
-
-## 🔄 מה הלאה?
-
-תכונות אפשריות לעתיד:
-
-- [ ] הערות על משימות (Comments)
-- [ ] קבצים מצורפים
-- [ ] תאריכי יעד (Due Dates)
-- [ ] התראות (Notifications)
-- [ ] Dashboard עם סטטיסטיקות
-- [ ] Export ל-PDF/Excel
-- [ ] Integration עם כלים נוספים
-
-## 👨‍💻 פיתוח
-
-פרויקט זה נבנה עם:
-
-- **NestJS** - עבור Backend חזק ומודולרי
-- **Angular 18** - עבור Frontend מודרני
-- **MongoDB** - עבור אחסון גמיש
-- **Socket.IO** - עבור Real-Time Communication
-
-## 📄 רישיון
-
-פרויקט זה הוא Open Source.
+**5. Access the Application**
+- Frontend: `http://localhost:4200`
+- Backend API: `http://localhost:3000`
 
 ---
 
-**נהנית מהפרויקט? ⭐ תן כוכב!**
+## 📡 API Reference
+
+### Authentication
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/auth/register` | Register new user |
+| POST | `/auth/login` | User login |
+| GET | `/auth/profile` | Get current user profile |
+
+### Boards
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/boards` | Get all user boards |
+| GET | `/boards/:id` | Get specific board |
+| POST | `/boards` | Create new board |
+| PATCH | `/boards/:id` | Update board |
+| DELETE | `/boards/:id` | Delete board |
+
+### Tasks
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/tasks?boardId=:id` | Get board tasks |
+| POST | `/tasks` | Create new task |
+| PATCH | `/tasks/:id` | Update task |
+| PATCH | `/tasks/:id/move` | Move task (Drag & Drop) |
+| DELETE | `/tasks/:id` | Delete task |
+
+### WebSocket Events
+| Event | Direction | Description |
+|-------|-----------|-------------|
+| `join-board` | Client → Server | Join board room |
+| `leave-board` | Client → Server | Leave board room |
+| `task-update` | Server → Client | Task created/updated/deleted |
+| `board-update` | Server → Client | Board updated |
+
+---
+
+## 🎯 Technical Highlights
+
+This project demonstrates proficiency in:
+
+- **Full-Stack Development** - End-to-end implementation from database to UI
+- **Real-Time Applications** - WebSocket implementation for live collaboration
+- **Modern Angular** - Signals, Standalone Components, and reactive patterns
+- **RESTful API Design** - Clean, documented API endpoints
+- **Authentication & Security** - JWT implementation with best practices
+- **Database Design** - MongoDB schema design with relationships
+- **Clean Code** - Modular architecture, separation of concerns
+- **TypeScript** - Strong typing throughout the entire stack
+
+---
+
+## 🔮 Future Enhancements
+
+- [ ] Comments on tasks
+- [ ] File attachments
+- [ ] Due dates with reminders
+- [ ] Push notifications
+- [ ] Analytics dashboard
+- [ ] Export to PDF/Excel
+- [ ] Third-party integrations (Slack, GitHub)
+
+---
+
+## 📄 License
+
+This project is open source and available under the [MIT License](LICENSE).
+
+---
+
+<div align="center">
+
+**⭐ If you found this project interesting, please consider giving it a star!**
+
+</div>
