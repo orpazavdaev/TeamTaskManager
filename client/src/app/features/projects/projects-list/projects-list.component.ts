@@ -36,8 +36,8 @@ export class ProjectsListComponent implements OnInit {
     if (token) {
       // Update all project colors to new blue palette
       this.projectsService.updateAllColors().subscribe({
-        next: (result) => {
-          console.log('Updated project colors:', result);
+        next: () => {
+          // Colors updated
         },
         error: (err) => {
           console.error('Failed to update project colors:', err);
@@ -53,8 +53,8 @@ export class ProjectsListComponent implements OnInit {
         if (tokenAfterWait) {
           // Update all project colors to new blue palette
           this.projectsService.updateAllColors().subscribe({
-            next: (result) => {
-              console.log('Updated project colors:', result);
+            next: () => {
+              // Colors updated
             },
             error: (err) => {
               console.error('Failed to update project colors:', err);
@@ -169,10 +169,8 @@ export class ProjectsListComponent implements OnInit {
     const term = this.publicSearchTerm().trim();
     // Allow empty search to show all public projects
     this.isSearchingPublic.set(true);
-    console.log('Searching for public projects with term:', term);
     this.projectsService.searchPublicProjects(term || undefined).subscribe({
       next: (projects) => {
-        console.log('Public projects found:', projects.length, projects);
         // Filter out projects that the user already has access to
         const currentUser = this.authService.user();
         if (!currentUser) {
@@ -180,16 +178,6 @@ export class ProjectsListComponent implements OnInit {
           this.isSearchingPublic.set(false);
           return;
         }
-
-        console.log('Current user:', currentUser.id);
-        console.log(
-          'My projects:',
-          this.myProjects().map((p) => p._id)
-        );
-        console.log(
-          'Shared projects:',
-          this.sharedProjects().map((p) => p._id)
-        );
 
         const myProjectIds = new Set([
           ...this.myProjects().map((p) => p._id),
@@ -203,39 +191,15 @@ export class ProjectsListComponent implements OnInit {
               ? project.ownerId
               : (project.ownerId as any)?._id?.toString() || (project.ownerId as any)?.id;
 
-          console.log(
-            'Checking project:',
-            project.name,
-            'ownerId:',
-            ownerId,
-            'currentUser.id:',
-            currentUser.id
-          );
-          console.log('  ownerId === currentUser.id?', ownerId === currentUser.id);
-          console.log(
-            '  ownerId type:',
-            typeof ownerId,
-            'currentUser.id type:',
-            typeof currentUser.id
-          );
-
           // Use String() to ensure proper comparison
           if (String(ownerId) === String(currentUser.id)) {
-            console.log('Excluding project (owner):', project.name, project._id);
             return false;
           }
 
           const memberIds = (project.members || []).map((m: any) => {
             return typeof m === 'string' ? String(m) : String(m._id || m.id);
           });
-          console.log(
-            '  memberIds:',
-            memberIds,
-            'includes?',
-            memberIds.includes(String(currentUser.id))
-          );
           if (memberIds.includes(String(currentUser.id))) {
-            console.log('Excluding project (member):', project.name, project._id);
             return false;
           }
 
@@ -243,21 +207,11 @@ export class ProjectsListComponent implements OnInit {
           const projectIdStr = String(project._id);
           const myProjectIdsStr = new Set(Array.from(myProjectIds).map((id) => String(id)));
           if (myProjectIdsStr.has(projectIdStr)) {
-            console.log('Excluding project (already in list):', project.name, project._id);
             return false;
           }
 
-          console.log(
-            'Including project:',
-            project.name,
-            project._id,
-            'isPublic:',
-            project.isPublic
-          );
           return true;
         });
-
-        console.log('Filtered public projects:', filteredProjects.length, filteredProjects);
         this.publicProjects.set(filteredProjects);
         this.isSearchingPublic.set(false);
       },

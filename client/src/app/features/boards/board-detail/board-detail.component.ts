@@ -92,10 +92,8 @@ export class BoardDetailComponent implements OnInit, OnDestroy {
       this.router.navigate(['/boards']);
       return;
     }
-    console.log('Loading board with ID:', boardId);
     this.boardsService.getById(boardId).subscribe({
       next: (board) => {
-        console.log('Board loaded successfully:', board);
         this.board.set(board);
       },
       error: (err) => {
@@ -116,10 +114,8 @@ export class BoardDetailComponent implements OnInit, OnDestroy {
       return;
     }
     this.isLoading.set(true);
-    console.log('Loading tasks for board ID:', boardId);
     this.tasksService.getByBoard(boardId).subscribe({
       next: (tasks) => {
-        console.log('Tasks loaded successfully:', tasks.length, 'tasks');
         this.tasks.set(tasks);
         this.isLoading.set(false);
       },
